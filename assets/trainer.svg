@@ -1,36 +1,45 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 520" role="img" aria-labelledby="title desc">
-  <title id="title">Muscle Master trainer</title>
-  <desc id="desc">Red-haired anime-inspired fitness trainer in a black and red sports outfit.</desc>
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#ffe8c9"/>
-      <stop offset="1" stop-color="#f7c2be"/>
-    </linearGradient>
-    <linearGradient id="hair" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#cf3e2f"/>
-      <stop offset="1" stop-color="#8f1d25"/>
-    </linearGradient>
-  </defs>
-  <rect width="420" height="520" rx="44" fill="url(#bg)"/>
-  <circle cx="335" cy="92" r="62" fill="#fff" opacity=".28"/>
-  <path d="M27 432c83-65 170-88 366-65v153H27z" fill="#7f1c25" opacity=".12"/>
-  <path d="M108 214c-14-82 29-152 104-160 84-9 138 48 126 145-8 65-28 113-69 139H150c-27-27-35-68-42-124z" fill="url(#hair)"/>
-  <ellipse cx="222" cy="194" rx="82" ry="101" fill="#ffd9c2"/>
-  <path d="M143 151c16-71 97-103 157-55 26 21 35 54 32 83-35-21-76-32-121-31-24 1-47 7-68 18z" fill="#a52429"/>
-  <path d="M154 157c13 49 3 98-22 127 3-54 5-99 22-127z" fill="#a52429"/>
-  <path d="M313 155c11 43 14 86 4 132-22-31-29-78-4-132z" fill="#a52429"/>
-  <ellipse cx="191" cy="197" rx="10" ry="15" fill="#33252b"/>
-  <ellipse cx="252" cy="197" rx="10" ry="15" fill="#33252b"/>
-  <circle cx="194" cy="193" r="3" fill="#fff"/>
-  <circle cx="255" cy="193" r="3" fill="#fff"/>
-  <path d="M200 242c17 14 34 14 50 0" fill="none" stroke="#b54a4f" stroke-width="7" stroke-linecap="round"/>
-  <path d="M175 169c13-8 25-8 37-2M238 166c12-5 25-4 37 4" fill="none" stroke="#7a252b" stroke-width="7" stroke-linecap="round"/>
-  <path d="M178 285c10 30 82 33 92 0l8 57-109-1z" fill="#f6c6ad"/>
-  <path d="M92 520c8-118 56-188 129-188 79 0 126 66 136 188z" fill="#17171c"/>
-  <path d="M153 349c23 27 50 39 71 39s46-12 67-39l18 39c-18 31-47 49-85 49-40 0-71-18-92-51z" fill="#b5222a"/>
-  <path d="M191 390h64l13 130h-92z" fill="#f7efe3"/>
-  <path d="M83 447c26-57 55-91 91-105l-20 178H75zM362 447c-27-57-57-91-93-105l19 178h83z" fill="#23232a"/>
-  <path d="M120 414l36 20-17 36-38-17zM326 414l-36 20 17 36 38-17z" fill="#b5222a"/>
-  <circle cx="352" cy="106" r="29" fill="#b5222a"/>
-  <path d="M340 106h24M352 94v24" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 560" role="img" aria-labelledby="title desc">
+<title id="title">Muscle Master trainer</title><desc id="desc">Adult anime-inspired fitness trainer with a high ponytail, red jacket and black sportswear, cheering with a fist.</desc>
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2dc"/><stop offset=".55" stop-color="#f8d8c7"/><stop offset="1" stop-color="#e8b0b2"/></linearGradient>
+ <linearGradient id="hair" x1="0" y1="0" x2=".7" y2="1"><stop offset="0" stop-color="#3a2028"/><stop offset=".55" stop-color="#702630"/><stop offset="1" stop-color="#b02a31"/></linearGradient>
+ <linearGradient id="jacket" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d83b42"/><stop offset="1" stop-color="#821823"/></linearGradient>
+ <linearGradient id="skin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe4cf"/><stop offset="1" stop-color="#f4bea7"/></linearGradient>
+ <filter id="shadow"><feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#572027" flood-opacity=".25"/></filter>
+</defs>
+<rect width="420" height="560" rx="44" fill="url(#bg)"/>
+<circle cx="333" cy="95" r="70" fill="#fff" opacity=".24"/><circle cx="66" cy="418" r="94" fill="#b5222a" opacity=".06"/>
+<path d="M34 500c84-80 201-112 352-64v124H34z" fill="#841d25" opacity=".09"/>
+<!-- ponytail -->
+<path d="M281 90c64-33 112 5 89 61-12 30-49 34-71 9 20 49 5 91-42 101 18-48 10-92-15-121z" fill="url(#hair)" filter="url(#shadow)"/>
+<path d="M298 102c36-12 58 3 59 28-14-9-29-10-44-4z" fill="#d23b40"/>
+<!-- hair mass -->
+<path d="M100 221c-13-91 33-167 119-174 88-7 151 54 137 164-9 69-33 116-78 142H151c-32-31-44-77-51-132z" fill="url(#hair)" filter="url(#shadow)"/>
+<!-- face -->
+<ellipse cx="226" cy="199" rx="86" ry="104" fill="url(#skin)"/>
+<path d="M143 162c15-72 100-112 166-59 26 21 38 54 36 86-37-25-82-38-131-36-27 1-51 8-71 20z" fill="#49212a"/>
+<path d="M150 157c13 55 3 109-26 139 3-60 5-109 26-139zM326 157c12 47 14 94 1 145-24-35-29-87-1-145z" fill="#5c222b"/>
+<!-- brows eyes -->
+<path d="M173 173c13-8 28-9 41-3M250 170c13-5 27-3 39 5" fill="none" stroke="#58242c" stroke-width="7" stroke-linecap="round"/>
+<ellipse cx="192" cy="205" rx="11" ry="16" fill="#34242b"/><circle cx="195" cy="200" r="4" fill="#fff"/>
+<path d="M254 204c13 8 26 7 36-1" fill="none" stroke="#34242b" stroke-width="7" stroke-linecap="round"/>
+<path d="M205 251c20 17 40 17 59 0" fill="none" stroke="#bd5358" stroke-width="7" stroke-linecap="round"/>
+<path d="M181 230c-5 5-6 12-2 18M290 229c5 5 6 12 2 18" stroke="#ef9f91" stroke-width="8" stroke-linecap="round" opacity=".65"/>
+<!-- neck --> <path d="M183 291c11 34 83 36 94 0l11 67-118-1z" fill="url(#skin)"/>
+<!-- torso sports top -->
+<path d="M127 560c8-132 54-213 108-213 62 0 112 76 127 213z" fill="#17171d"/>
+<path d="M178 360c26 23 74 24 101 0l15 78c-45 27-91 27-133 0z" fill="#f6efe5"/>
+<path d="M174 397c32 17 75 17 109 0l9 42c-41 25-87 25-127 0z" fill="#202027"/>
+<text x="229" y="423" text-anchor="middle" font-family="system-ui,sans-serif" font-size="22" font-weight="900" fill="#b5222a">MM</text>
+<!-- jacket shoulders -->
+<path d="M88 560c12-103 45-172 91-199l-18 199zM365 560c-14-103-47-172-92-199l21 199z" fill="url(#jacket)"/>
+<path d="M103 431l59 27-18 48-58-25zM345 431l-58 27 18 48 56-25z" fill="#1d1b21" opacity=".8"/>
+<!-- raised cheering arm -->
+<path d="M315 387c24-42 44-72 64-92 13-13 30-11 39 2 8 13 3 27-9 36-17 14-30 37-43 78z" fill="url(#skin)"/>
+<path d="M375 305c-2-25 17-43 38-33 17 8 18 32 2 43-13 9-27 6-40-10z" fill="#242229"/>
+<path d="M383 280l10 27M401 278l-2 29" stroke="#d33a41" stroke-width="6" stroke-linecap="round"/>
+<!-- necklace --> <path d="M199 354c16 20 42 20 58 0" fill="none" stroke="#c99b53" stroke-width="3"/><circle cx="228" cy="373" r="7" fill="#c99b53"/>
+<!-- details -->
+<circle cx="64" cy="82" r="31" fill="#b5222a"/><path d="M51 82h26M64 69v26" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+<path d="M49 132h66" stroke="#b5222a" stroke-width="7" stroke-linecap="round" opacity=".18"/><path d="M316 497h65" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".35"/>
 </svg>
