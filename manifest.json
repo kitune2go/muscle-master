@@ -1,0 +1,12 @@
+{
+  "name": "Muscle Master",
+  "short_name": "MuscleMaster",
+  "description": "育成ゲーム風トレーニング記録アプリ",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fff9ed",
+  "theme_color": "#b5222a",
+  "lang": "ja",
+  "icons": []
+}
