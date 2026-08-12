@@ -1,5 +1,5 @@
-const CACHE_NAME = 'muscle-master-v1';
-const APP_SHELL = ['./', './index.html', './style.css', './app.js', './manifest.json'];
+const CACHE_NAME = 'muscle-master-v2';
+const APP_SHELL = ['./', './index.html', './style.css', './app.js', './manifest.json', './assets/trainer.svg'];
 
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)));
@@ -7,9 +7,7 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))))
-  );
+  event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key)))));
   self.clients.claim();
 });
 
