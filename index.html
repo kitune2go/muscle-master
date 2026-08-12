@@ -7,6 +7,7 @@
   <meta name="description" content="育成ゲーム風トレーニング記録アプリ Muscle Master" />
   <link rel="manifest" href="./manifest.json" />
   <link rel="stylesheet" href="./style.css" />
+  <link rel="stylesheet" href="./v3.css" />
   <title>Muscle Master</title>
 </head>
 <body>
@@ -16,7 +17,10 @@
       <span class="brand-mark">M</span>
       <span><b>MUSCLE MASTER</b><small>BODY TRAINING RPG</small></span>
     </a>
-    <button id="settingsButton" class="round-button" aria-label="設定">⚙</button>
+    <div class="top-actions">
+      <button id="soundButton" class="round-button" aria-label="効果音">♪</button>
+      <button id="settingsButton" class="round-button" aria-label="設定">⚙</button>
+    </div>
   </header>
 
   <main class="app-shell">
@@ -27,62 +31,53 @@
           <p class="kicker">TODAY'S MISSION</p>
           <h1 id="heroTitle">今日の自分を<br><em>1段階</em>アップデート。</h1>
           <p class="hero-lead">回数を競うより、フォームを整えて積み上げる。毎日のセットが、あなたのステータスになります。</p>
+          <div class="plan-strip">
+            <span id="weekdayChip" class="day-chip">MON</span>
+            <div><small>TODAY'S PLAN</small><b id="planName">全身A</b><span id="planNote">基本の全身トレーニング</span></div>
+          </div>
           <div class="hero-actions">
             <button class="primary-button" data-tab-link="quest">トレーニング開始 <span>→</span></button>
             <span class="xp-chip"><b id="levelText">LV. 1</b><small id="xpText">0 XP</small></span>
           </div>
         </div>
-        <div class="trainer-stage">
+        <div class="trainer-stage" id="trainerStage">
           <div class="trainer-aura" aria-hidden="true"></div>
-          <img src="./assets/trainer.svg" alt="応援トレーナー" class="trainer-art" />
+          <img src="./assets/trainer.svg" alt="応援トレーナー" class="trainer-art" id="trainerArt" />
           <div class="trainer-badge"><span>TRAINER</span><b id="trainerName">トレーナー</b></div>
         </div>
       </section>
 
       <section class="speech-card game-panel">
         <span class="speech-avatar">♥</span>
-        <div>
-          <p class="mini-label">TRAINER MESSAGE</p>
-          <p id="trainerMessage">今日は1セットから始めましょう。積み上げが最強よ。</p>
-        </div>
+        <div><p class="mini-label">TRAINER MESSAGE</p><p id="trainerMessage">今日は1セットから始めましょう。積み上げが最強よ。</p></div>
       </section>
 
       <section class="metrics-grid">
-        <article class="metric-card game-panel">
-          <span class="metric-icon">◎</span><small>TODAY</small><strong id="progressText">0%</strong><span>達成率</span>
-        </article>
-        <article class="metric-card game-panel">
-          <span class="metric-icon">🔥</span><small>STREAK</small><strong><span id="streakText">0</span>日</strong><span>継続</span>
-        </article>
-        <article class="metric-card game-panel">
-          <span class="metric-icon">◆</span><small>TOTAL</small><strong id="totalSetsText">0</strong><span>累計セット</span>
-        </article>
+        <article class="metric-card game-panel"><span class="metric-icon">◎</span><small>TODAY</small><strong id="progressText">0%</strong><span>達成率</span></article>
+        <article class="metric-card game-panel"><span class="metric-icon">🔥</span><small>STREAK</small><strong><span id="streakText">0</span>日</strong><span>継続</span></article>
+        <article class="metric-card game-panel"><span class="metric-icon">◆</span><small>TOTAL</small><strong id="totalSetsText">0</strong><span>累計セット</span></article>
       </section>
 
       <section class="game-panel quick-panel">
-        <div class="section-heading">
-          <div><p class="mini-label">QUICK START</p><h2>次のクエスト</h2></div>
-          <button class="ghost-button" data-tab-link="quest">すべて見る</button>
-        </div>
+        <div class="section-heading"><div><p class="mini-label">QUICK START</p><h2>次のクエスト</h2></div><button class="ghost-button" data-tab-link="quest">すべて見る</button></div>
         <div id="quickQuest" class="quick-quest"></div>
       </section>
     </section>
 
     <section id="view-quest" class="view" data-view="quest">
       <section class="page-heading">
-        <div><p class="kicker">DAILY QUEST</p><h1 id="userHeading">今日のトレーニング</h1><p>無理に全部やらなくてOK。終えたセットだけ記録しましょう。</p></div>
+        <div><p class="kicker">DAILY QUEST</p><h1 id="userHeading">今日のトレーニング</h1><p id="questDescription">無理に全部やらなくてOK。終えたセットだけ記録しましょう。</p></div>
         <button id="resetTodayButton" class="ghost-button danger">今日をリセット</button>
       </section>
+      <div class="weekly-banner game-panel"><div><span id="questDayChip" class="day-chip">MON</span></div><div><small>WEEKLY PROGRAM</small><b id="questPlanName">全身A</b><span id="questPlanNote">基本の全身トレーニング</span></div></div>
       <div class="progress-rail"><span id="progressBar"></span></div>
       <div id="exerciseList" class="exercise-list"></div>
+      <p class="safety-note">痛み・しびれ・めまいなどが出た場合は中止してください。休養日も育成の一部です。</p>
     </section>
 
     <section id="view-status" class="view" data-view="status">
       <section class="page-heading"><div><p class="kicker">PLAYER STATUS</p><h1>身体育成ステータス</h1><p>完了したセットが4つの能力値として蓄積されます。</p></div></section>
-      <section class="profile-card game-panel">
-        <div class="profile-level"><small>PLAYER LEVEL</small><strong id="profileLevel">01</strong></div>
-        <div><p class="mini-label">NEXT LEVEL</p><div class="level-rail"><span id="levelBar"></span></div><p id="levelCaption" class="muted">あと100 XP</p></div>
-      </section>
+      <section class="profile-card game-panel"><div class="profile-level"><small>PLAYER LEVEL</small><strong id="profileLevel">01</strong></div><div><p class="mini-label">NEXT LEVEL</p><div class="level-rail"><span id="levelBar"></span></div><p id="levelCaption" class="muted">あと100 XP</p></div></section>
       <section class="stats-board game-panel">
         <div class="stat-row"><div><span>STR</span><b>筋力</b></div><div class="stat-track"><i id="strengthBar"></i></div><strong id="strengthValue">0</strong></div>
         <div class="stat-row"><div><span>CORE</span><b>体幹</b></div><div class="stat-track"><i id="coreBar"></i></div><strong id="coreValue">0</strong></div>
@@ -107,16 +102,21 @@
 
   <dialog id="settingsDialog">
     <form method="dialog" id="settingsForm" class="settings-form">
-      <div class="section-heading">
-        <div><p class="mini-label">PROFILE SETTINGS</p><h2>名前設定</h2></div>
-        <button class="round-button" value="cancel" aria-label="閉じる">✕</button>
-      </div>
+      <div class="section-heading"><div><p class="mini-label">PROFILE SETTINGS</p><h2>設定</h2></div><button class="round-button" value="cancel" aria-label="閉じる">✕</button></div>
       <label>あなたの名前<input id="userNameInput" maxlength="20" placeholder="例：タナカ" /></label>
-      <label>応援キャラの名前<input id="trainerNameInput" maxlength="20" placeholder="例：ミナ" /></label>
+      <label>応援キャラの名前<input id="trainerNameInput" maxlength="20" placeholder="例：リオ" /></label>
       <p class="setting-note">名前はいつでも変更できます。記録データには影響しません。</p>
       <button id="saveSettingsButton" class="primary-button full" value="default">保存する</button>
     </form>
   </dialog>
+
+  <div id="levelUpOverlay" class="levelup-overlay" aria-hidden="true">
+    <div class="levelup-card">
+      <p>LEVEL UP!</p><strong id="levelUpNumber">LV. 2</strong><span id="levelUpMessage">新しいレベルに到達！</span><button id="levelUpClose" class="primary-button">続ける</button>
+    </div>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="confetti" class="confetti-layer" aria-hidden="true"></div>
 
   <template id="exerciseTemplate">
     <article class="exercise-card game-panel">
