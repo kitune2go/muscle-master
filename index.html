@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#b5222a" />
+  <meta name="description" content="育成ゲーム風トレーニング記録アプリ Muscle Master" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="stylesheet" href="./style.css" />
+  <title>Muscle Master</title>
+</head>
+<body>
+  <header class="hero">
+    <div>
+      <p class="eyebrow">BODY TRAINING RPG</p>
+      <h1>Muscle Master</h1>
+      <p class="subtitle">鍛えて、記録して、昨日の自分を超えろ。</p>
+    </div>
+    <button id="settingsButton" class="icon-button" aria-label="設定">⚙️</button>
+  </header>
+
+  <main class="app-shell">
+    <section class="trainer-card panel">
+      <div class="trainer-portrait" aria-hidden="true">👩‍🏫</div>
+      <div class="trainer-copy">
+        <p class="small-label">TRAINER</p>
+        <h2 id="trainerName">トレーナー</h2>
+        <p id="trainerMessage" class="speech">今日も1セットずつ積み上げましょう。</p>
+      </div>
+    </section>
+
+    <section class="status-grid">
+      <article class="status-card panel">
+        <span>今日の達成率</span>
+        <strong id="progressText">0%</strong>
+      </article>
+      <article class="status-card panel">
+        <span>継続</span>
+        <strong><span id="streakText">0</span>日 🔥</strong>
+      </article>
+      <article class="status-card panel">
+        <span>累計セット</span>
+        <strong id="totalSetsText">0</strong>
+      </article>
+    </section>
+
+    <section class="panel training-panel">
+      <div class="section-heading">
+        <div>
+          <p class="small-label">TODAY'S QUEST</p>
+          <h2 id="userHeading">今日のトレーニング</h2>
+        </div>
+        <button id="resetTodayButton" class="text-button">今日をリセット</button>
+      </div>
+      <div id="exerciseList" class="exercise-list"></div>
+    </section>
+
+    <section class="panel stats-panel">
+      <p class="small-label">STATUS</p>
+      <h2>身体育成ステータス</h2>
+      <div class="stat-row"><span>筋力</span><progress id="strengthStat" max="100" value="0"></progress></div>
+      <div class="stat-row"><span>体幹</span><progress id="coreStat" max="100" value="0"></progress></div>
+      <div class="stat-row"><span>柔軟</span><progress id="mobilityStat" max="100" value="0"></progress></div>
+      <div class="stat-row"><span>持久力</span><progress id="enduranceStat" max="100" value="0"></progress></div>
+    </section>
+  </main>
+
+  <dialog id="settingsDialog">
+    <form method="dialog" id="settingsForm" class="settings-form">
+      <div class="section-heading">
+        <div>
+          <p class="small-label">SETTINGS</p>
+          <h2>名前設定</h2>
+        </div>
+        <button class="icon-button" value="cancel" aria-label="閉じる">✕</button>
+      </div>
+      <label>
+        あなたの名前
+        <input id="userNameInput" maxlength="20" placeholder="例：タナカ" />
+      </label>
+      <label>
+        応援キャラの名前
+        <input id="trainerNameInput" maxlength="20" placeholder="例：ミナ" />
+      </label>
+      <button id="saveSettingsButton" class="primary-button" value="default">保存する</button>
+    </form>
+  </dialog>
+
+  <template id="exerciseTemplate">
+    <article class="exercise-card">
+      <div>
+        <p class="exercise-kind"></p>
+        <h3 class="exercise-name"></h3>
+        <p class="exercise-target"></p>
+      </div>
+      <div class="set-buttons"></div>
+    </article>
+  </template>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>
