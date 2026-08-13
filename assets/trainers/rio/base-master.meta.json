@@ -1,0 +1,41 @@
+{
+  "trainerId": "rio",
+  "displayName": "リオ",
+  "asset": "base-master",
+  "status": "canonical",
+  "version": "1.0",
+  "approvedDate": "2026-08-13",
+  "generationMaster": {
+    "format": "png",
+    "width": 1024,
+    "height": 1536,
+    "alpha": true,
+    "conversationFilename": "full_body_character_illustration_on_a_transparent.png"
+  },
+  "runtimeProxy": {
+    "format": "webp",
+    "width": 384,
+    "height": 576,
+    "alpha": true,
+    "sha256": "db832df43d1fe8e8e60ff37d8039dfc92926b80b101092aadfddeba3b255a8ea",
+    "conversationFilename": "rio384-q80.webp"
+  },
+  "githubThumbnail": {
+    "path": "assets/trainers/rio/reference/base-master-v1-thumbnail.webp",
+    "width": 64,
+    "height": 96,
+    "alpha": true
+  },
+  "designLock": {
+    "hair": "auburn/red high ponytail with red scrunchie",
+    "eyes": "amber",
+    "jacket": "open red tracksuit jacket with white sleeve stripes and gold crowned MM crest",
+    "top": "black sports bra with small triangular emblem",
+    "shorts": "black athletic shorts with white trim, red drawstring and MM crest",
+    "wristbands": "black/red crown wristbands",
+    "shoes": "red/black/white athletic sneakers",
+    "physique": "athletic, visibly trained build"
+  },
+  "binaryStorageNote": "The GitHub connector accepted the real-image thumbnail but rejected the larger generated binary payload. The high-resolution generation master and 384x576 runtime proxy remain preserved as conversation artifacts; SHA-256 identifies the approved runtime proxy exactly.",
+  "derivationRule": "Hero, portrait, expression and chibi assets must preserve this canonical identity and design lock."
+}
