@@ -55,6 +55,23 @@ Chibi:
 - `rest`
 - `achieved`
 
+## MASTER semantic state mapping
+
+Runtime v1 maps MASTER_SPEC's ten required semantic states onto the approved asset pack:
+
+- 通常 → `expressions.neutral`
+- 笑顔 → `expressions.smile`
+- 応援 → `expressions.cheer`
+- 称賛 → `expressions.achieved` fallback
+- 驚き → `expressions.blush` fallback
+- 心配 → `expressions.serious`
+- 疲労 → `expressions.tired`
+- 休養 → `chibi.rest`
+- 達成 → `expressions.achieved`
+- レベルアップ → `level-up`
+
+Dedicated `praise` and `surprise` face variants are optional Runtime v1.1 additions. They are not v1 blockers because the semantic state layer provides deterministic fallbacks.
+
 ## Runtime paths
 ```text
 assets/trainers/rio/base-master.webp
@@ -64,6 +81,8 @@ assets/trainers/rio/level-up.webp
 assets/trainers/rio/expressions/*.webp
 assets/trainers/rio/chibi/*.webp
 assets/trainers/rio/manifest.json
+trainer-data.js
+trainer-runtime.js
 ```
 
 ## Approval state
@@ -74,10 +93,13 @@ assets/trainers/rio/manifest.json
 - Portrait: APPROVED
 - Level Up: APPROVED
 - Runtime manifest: GENERATED
+- Runtime state mapping: APPROVED FOR v1
+- Application connection: IMPLEMENTED / QA PENDING
 
 ## Implementation rule
 表示名と`trainerId`を分離する。
 画像ファイル名をUIへ散在してハードコードせず、`manifest.json`または同等のTrainerデータ層から参照する。
+現在のWeb実装では `trainer-data.js` を同等のTrainerデータ層として使用し、`trainer-runtime.js` がDOMへ適用する。
 台詞は画像へ焼き込まず、HTML/CSSまたはアプリデータとして保持する。
 
 ## Source hierarchy
