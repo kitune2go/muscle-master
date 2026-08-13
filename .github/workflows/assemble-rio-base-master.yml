@@ -21,15 +21,15 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          count=$(find .asset-staging/rio/base-master-v1 -maxdepth 1 -name 'chunk-*.b64' 2>/dev/null | wc -l || true)
+          count=$(find .asset-staging/rio/base-master-v1 -maxdepth 1 -type f -name 'chunk-[0-9][0-9].b64' 2>/dev/null | wc -l || true)
           echo "count=$count" >> "$GITHUB_OUTPUT"
       - name: Assemble canonical WebP
-        if: steps.chunks.outputs.count == '10'
+        if: steps.chunks.outputs.count == '30'
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p assets/trainers/rio
-          cat .asset-staging/rio/base-master-v1/chunk-*.b64 | tr -d '\n\r' | base64 --decode > assets/trainers/rio/base-master.webp
+          cat .asset-staging/rio/base-master-v1/chunk-[0-9][0-9].b64 | tr -d '\n\r' | base64 --decode > assets/trainers/rio/base-master.webp
           echo 'db832df43d1fe8e8e60ff37d8039dfc92926b80b101092aadfddeba3b255a8ea  assets/trainers/rio/base-master.webp' | sha256sum -c -
           cat > assets/trainers/rio/base-master.meta.json <<'JSON'
           {
@@ -46,7 +46,7 @@ jobs:
           }
           JSON
       - name: Commit assembled asset and clean staging
-        if: steps.chunks.outputs.count == '10'
+        if: steps.chunks.outputs.count == '30'
         shell: bash
         run: |
           set -euo pipefail
