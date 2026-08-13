@@ -1,0 +1,59 @@
+name: Assemble Rio Base Master
+
+on:
+  push:
+    branches:
+      - assets/rio-reference-v1
+    paths:
+      - '.asset-staging/rio/base-master-v1/**'
+      - '.github/workflows/assemble-rio-base-master.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check all chunks
+        id: chunks
+        shell: bash
+        run: |
+          set -euo pipefail
+          count=$(find .asset-staging/rio/base-master-v1 -maxdepth 1 -name 'chunk-*.b64' 2>/dev/null | wc -l || true)
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+      - name: Assemble canonical WebP
+        if: steps.chunks.outputs.count == '10'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p assets/trainers/rio
+          cat .asset-staging/rio/base-master-v1/chunk-*.b64 | tr -d '\n\r' | base64 --decode > assets/trainers/rio/base-master.webp
+          echo 'db832df43d1fe8e8e60ff37d8039dfc92926b80b101092aadfddeba3b255a8ea  assets/trainers/rio/base-master.webp' | sha256sum -c -
+          cat > assets/trainers/rio/base-master.meta.json <<'JSON'
+          {
+            "trainerId": "rio",
+            "asset": "base-master",
+            "status": "canonical",
+            "version": "1.0",
+            "format": "webp",
+            "width": 384,
+            "height": 576,
+            "transparentBackground": true,
+            "sha256": "db832df43d1fe8e8e60ff37d8039dfc92926b80b101092aadfddeba3b255a8ea",
+            "note": "Canonical runtime/reference proxy derived from the approved transparent Rio Base Master. High-resolution source remains the generation master."
+          }
+          JSON
+      - name: Commit assembled asset and clean staging
+        if: steps.chunks.outputs.count == '10'
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .asset-staging/rio/base-master-v1
+          rm -f .github/workflows/assemble-rio-base-master.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'feat: add canonical Rio base master'
+          git push
