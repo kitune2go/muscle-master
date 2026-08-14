@@ -120,41 +120,84 @@
         <section id="view-quest" class="view training-select-view" data-view="quest">
           <section class="training-select-heading">
             <div>
-              <p class="kicker">TRAINING SELECT</p>
+              <p id="questHeadingKicker" class="kicker">TRAINING SELECT</p>
               <h1 id="userHeading">トレーニング選択</h1>
               <p id="questDescription">今日のメニューから、取り組む種目を選びましょう。</p>
             </div>
             <button id="resetTodayButton" class="training-reset-button" aria-label="今日の記録をリセット">リセット</button>
           </section>
 
-          <section class="quest-summary game-panel" aria-labelledby="questPlanName">
-            <span id="questDayChip" class="day-chip">MON</span>
-            <div class="quest-summary-copy"><small>WEEKLY PROGRAM</small><b id="questPlanName">全身A</b><span id="questPlanNote">基本の全身トレーニング</span></div>
-            <div class="quest-summary-progress" aria-label="今日のセット進捗"><span><strong id="questProgressDone">0</strong> / <span id="questProgressTotal">0</span></span><small>SETS</small></div>
-            <div class="progress-rail"><span id="progressBar"></span></div>
+          <nav class="quest-mode-switch" role="tablist" aria-label="クエスト画面の表示切替">
+            <button id="questTrainingTab" class="quest-mode-button is-active" type="button" role="tab" data-quest-mode="training" aria-selected="true" aria-controls="questTrainingPanel"><svg aria-hidden="true"><use href="#icon-dumbbell"></use></svg><span>今日のメニュー</span></button>
+            <button id="questMissionTab" class="quest-mode-button" type="button" role="tab" data-quest-mode="missions" aria-selected="false" aria-controls="questMissionPanel"><svg aria-hidden="true"><use href="#icon-trophy"></use></svg><span>ミッション・報酬</span></button>
+          </nav>
+
+          <div id="questTrainingPanel" class="quest-mode-panel" role="tabpanel" aria-labelledby="questTrainingTab">
+            <section class="quest-summary game-panel" aria-labelledby="questPlanName">
+              <span id="questDayChip" class="day-chip">MON</span>
+              <div class="quest-summary-copy"><small>WEEKLY PROGRAM</small><b id="questPlanName">全身A</b><span id="questPlanNote">基本の全身トレーニング</span></div>
+              <div class="quest-summary-progress" aria-label="今日のセット進捗"><span><strong id="questProgressDone">0</strong> / <span id="questProgressTotal">0</span></span><small>SETS</small></div>
+              <div class="progress-rail"><span id="progressBar"></span></div>
+            </section>
+
+            <div class="training-filter-section">
+              <div class="training-filter-copy">
+                <div><p class="section-kicker">ABILITY FILTER</p><h2>種目を選ぶ</h2></div>
+                <span>セット完了で +10 XP</span>
+              </div>
+              <div class="training-filters" role="group" aria-label="能力カテゴリで絞り込む">
+                <button type="button" class="training-filter is-active" data-quest-filter="all" aria-pressed="true">すべて</button>
+                <button type="button" class="training-filter" data-quest-filter="strength" aria-pressed="false">筋力</button>
+                <button type="button" class="training-filter" data-quest-filter="core" aria-pressed="false">体幹</button>
+                <button type="button" class="training-filter" data-quest-filter="mobility" aria-pressed="false">柔軟</button>
+                <button type="button" class="training-filter" data-quest-filter="endurance" aria-pressed="false">持久力</button>
+              </div>
+            </div>
+
+            <div id="exerciseList" class="exercise-list" aria-live="polite"></div>
+            <div id="exerciseEmptyState" class="exercise-empty-state game-panel" hidden>
+              <svg aria-hidden="true"><use href="#icon-dumbbell"></use></svg>
+              <b>今日のメニューには該当種目がありません</b>
+              <span>「すべて」に戻すか、別の能力カテゴリを選んでください。</span>
+            </div>
+            <p class="safety-note">痛み・しびれ・めまいなどが出た場合は中止してください。休養日も育成の一部です。</p>
+          </div>
+
+          <section id="questMissionPanel" class="quest-mode-panel mission-board" role="tabpanel" aria-labelledby="questMissionTab" hidden>
+            <section class="mission-overview game-panel" aria-labelledby="missionOverviewTitle">
+              <span class="mission-overview-icon" aria-hidden="true"><svg><use href="#icon-trophy"></use></svg></span>
+              <div class="mission-overview-copy"><p>MISSION BOARD</p><h2 id="missionOverviewTitle">今週の育成目標</h2><span>日々の記録から自動で進捗を更新します。</span></div>
+              <div class="mission-overview-count" aria-label="ミッション達成数"><strong id="missionCompletedCount">0</strong><span>/</span><b id="missionTotalCount">0</b><small>達成</small></div>
+              <div class="mission-overview-progress"><span id="missionOverviewBar"></span></div>
+              <div class="mission-overview-footer"><span>受取済み <b id="missionClaimedCount">0</b></span><span>デイリーは毎日、週間は月曜更新</span></div>
+            </section>
+
+            <div id="missionLoadState" class="mission-empty-state game-panel" role="status" aria-live="polite">
+              <svg aria-hidden="true"><use href="#icon-quest"></use></svg>
+              <b id="missionLoadTitle">ミッションを読み込んでいます</b>
+              <span id="missionLoadDescription">トレーニング記録はこのまま利用できます。</span>
+            </div>
+
+            <section id="dailyMissionGroup" class="mission-group" aria-labelledby="dailyMissionHeading" hidden>
+              <div class="mission-group-heading"><div><p>DAILY MISSIONS</p><h2 id="dailyMissionHeading">今日のミッション</h2></div><span id="dailyMissionCount">0 / 0</span></div>
+              <div id="dailyMissionList" class="mission-list"></div>
+            </section>
+
+            <section id="weeklyMissionGroup" class="mission-group" aria-labelledby="weeklyMissionHeading" hidden>
+              <div class="mission-group-heading"><div><p>WEEKLY MISSIONS</p><h2 id="weeklyMissionHeading">今週のミッション</h2></div><span id="weeklyMissionCount">0 / 0</span></div>
+              <div id="weeklyMissionList" class="mission-list"></div>
+            </section>
+
+            <section id="extraMissionGroup" class="mission-group" aria-labelledby="extraMissionHeading" hidden>
+              <div class="mission-group-heading"><div><p>EXTRA MISSIONS</p><h2 id="extraMissionHeading">チャレンジ・イベント</h2></div><span id="extraMissionCount">0 / 0</span></div>
+              <div id="extraMissionList" class="mission-list"></div>
+            </section>
+
+            <aside class="reward-phase-note" role="note">
+              <svg aria-hidden="true"><use href="#icon-trophy"></use></svg>
+              <div><b>報酬の受取について</b><span>今回は進捗・達成・受取状態を表示します。ボーナスXPの実付与は次のアップデートで接続します。</span></div>
+            </aside>
           </section>
-
-          <div class="training-filter-section">
-            <div class="training-filter-copy">
-              <div><p class="section-kicker">ABILITY FILTER</p><h2>種目を選ぶ</h2></div>
-              <span>セット完了で +10 XP</span>
-            </div>
-            <div class="training-filters" role="group" aria-label="能力カテゴリで絞り込む">
-              <button type="button" class="training-filter is-active" data-quest-filter="all" aria-pressed="true">すべて</button>
-              <button type="button" class="training-filter" data-quest-filter="strength" aria-pressed="false">筋力</button>
-              <button type="button" class="training-filter" data-quest-filter="core" aria-pressed="false">体幹</button>
-              <button type="button" class="training-filter" data-quest-filter="mobility" aria-pressed="false">柔軟</button>
-              <button type="button" class="training-filter" data-quest-filter="endurance" aria-pressed="false">持久力</button>
-            </div>
-          </div>
-
-          <div id="exerciseList" class="exercise-list" aria-live="polite"></div>
-          <div id="exerciseEmptyState" class="exercise-empty-state game-panel" hidden>
-            <svg aria-hidden="true"><use href="#icon-dumbbell"></use></svg>
-            <b>今日のメニューには該当種目がありません</b>
-            <span>「すべて」に戻すか、別の能力カテゴリを選んでください。</span>
-          </div>
-          <p class="safety-note">痛み・しびれ・めまいなどが出た場合は中止してください。休養日も育成の一部です。</p>
         </section>
 
         <section id="view-workout" class="view workout-view" data-view="workout" aria-labelledby="workoutExerciseName">
@@ -272,6 +315,19 @@
       <div class="set-buttons">
         <button class="exercise-start-button" type="button"><svg><use href="#icon-play"></use></svg><span>開始</span></button>
         <span class="set-buttons-label">QUICK SET</span>
+      </div>
+    </article>
+  </template>
+
+  <template id="missionTemplate">
+    <article class="mission-card game-panel">
+      <span class="mission-medal" aria-hidden="true"><svg><use href="#icon-trophy"></use></svg></span>
+      <div class="mission-card-copy">
+        <div class="mission-card-heading"><span class="mission-type"></span><span class="mission-status"></span></div>
+        <h3 class="mission-title"></h3>
+        <p class="mission-description"></p>
+        <div class="mission-progress-copy"><span><b class="mission-value">0</b> / <span class="mission-target">0</span></span><strong class="mission-reward">報酬予定</strong></div>
+        <div class="mission-progress-rail"><span></span></div>
       </div>
     </article>
   </template>

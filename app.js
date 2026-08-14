@@ -21,6 +21,18 @@ const questCategoryMeta={
   mobility:{label:'柔軟',short:'MOB',icon:'#icon-mobility'},
   endurance:{label:'持久力',short:'END',icon:'#icon-endurance'}
 };
+const missionTypeMeta={
+  daily:{label:'DAILY'},
+  weekly:{label:'WEEKLY'},
+  challenge:{label:'CHALLENGE'},
+  event:{label:'EVENT'},
+  achievement:{label:'ACHIEVEMENT'}
+};
+const missionStatusMeta={
+  active:{label:'進行中'},
+  completed:{label:'達成済み'},
+  claimed:{label:'受取済み'}
+};
 
 const weeklyPlans={
   0:{code:'SUN',name:'回復日',note:'軽く動いて、しっかり休む',ids:['mobility','bridge']},
@@ -52,7 +64,10 @@ function loadState(){
 }
 let state=loadState();
 let questFilter='all';
+let questMode='training';
 let questPack=null;
+let questEvaluation=null;
+let questLoadError=false;
 let activeWorkoutId=null;
 let workoutSetIndex=0;
 const workoutClock={running:false,elapsed:0,remaining:0,intervalId:null};
@@ -64,6 +79,7 @@ function evaluateQuests(){
   const now=new Date();
   const evaluation=QuestCore.evaluateQuestPack(questPack,state,{now,exerciseCatalog});
   const merged=QuestCore.mergeQuestEvaluation(state.quests,evaluation,now);
+  questEvaluation=evaluation;
   state.quests=merged.state;
   saveState();
   return merged.newlyCompleted;
@@ -74,8 +90,10 @@ async function loadQuestPack(){
     const response=await fetch(QUEST_PACK_URL);
     if(!response.ok)throw new Error(`Quest pack request failed: ${response.status}`);
     questPack=QuestCore.validateQuestPack(await response.json());
+    questLoadError=false;
     evaluateQuests();
-  }catch(error){console.warn('Quest pack is unavailable; training records remain active.',error);}
+    renderQuest();
+  }catch(error){questPack=null;questEvaluation=null;questLoadError=true;renderQuest();console.warn('Quest pack is unavailable; training records remain active.',error);}
 }
 
 function ensureDay(key=todayKey()){
@@ -125,11 +143,87 @@ function checkLevelUp(previousLevel){const now=level();if(now>previousLevel){sta
 
 function renderPlanLabels(){const plan=planForDate(),user=state.userName?`${state.userName}さん、`:'';['#weekdayChip','#questDayChip'].forEach(id=>document.querySelector(id).textContent=plan.code);['#planName','#questPlanName'].forEach(id=>document.querySelector(id).textContent=plan.name);['#planNote','#questPlanNote'].forEach(id=>document.querySelector(id).textContent=plan.note);document.querySelector('#questDescription').textContent=plan.name==='回復日'?`${user}今日は軽く身体を動かす日です。`:`${user}今日のメニューから取り組む種目を選びましょう。`;}
 function renderHome(){const key=todayKey(),progress=getProgress(key),lv=level();document.querySelector('#progressText').textContent=`${progress}%`;document.querySelector('#streakText').textContent=getStreak();document.querySelector('#totalSetsText').textContent=state.totalSets;document.querySelector('#trainerName').textContent=Core.trainerDisplayName(state.trainerName);document.querySelector('#trainerMessage').textContent=trainerMessage(progress);document.querySelector('#levelText').textContent=`LV. ${lv}`;document.querySelector('#xpText').textContent=`${xp()} XP`;document.querySelector('#heroTitle').innerHTML=state.userName?`${escapeHtml(state.userName)}を<br><em>1段階</em>アップデート。`:`今日の自分を<br><em>1段階</em>アップデート。`;const quick=document.querySelector('#quickQuest'),next=firstIncomplete();if(!next)quick.innerHTML='<div class="quick-item"><div><strong>本日のクエスト完了</strong><span>今日は回復まで含めて育成です。</span></div><button data-tab-link="status">成長を見る</button></div>';else quick.innerHTML=`<div class="quick-item"><div><strong>${next.ex.name} · SET ${next.index+1}</strong><span>${next.ex.kind}｜${next.ex.target}</span></div><button data-quick="${next.ex.id}" data-index="${next.index}">完了する</button></div>`;}
+function renderQuestMode(){
+  const missionsActive=questMode==='missions';
+  document.querySelectorAll('[data-quest-mode]').forEach(button=>{
+    const active=button.dataset.questMode===questMode;
+    button.classList.toggle('is-active',active);
+    button.setAttribute('aria-selected',String(active));
+    button.tabIndex=active?0:-1;
+  });
+  document.querySelector('#questTrainingPanel').hidden=missionsActive;
+  document.querySelector('#questMissionPanel').hidden=!missionsActive;
+  document.querySelector('#resetTodayButton').hidden=missionsActive;
+  document.querySelector('#questHeadingKicker').textContent=missionsActive?'MISSION & REWARD':'TRAINING SELECT';
+  document.querySelector('#userHeading').textContent=missionsActive?'ミッション・報酬':'トレーニング選択';
+  if(missionsActive){
+    document.querySelector('#questDescription').textContent='デイリーと週間目標の進捗・達成・受取状態を確認できます。';
+  }else{
+    const plan=planForDate(),user=state.userName?`${state.userName}さん、`:'';
+    document.querySelector('#questDescription').textContent=plan.name==='回復日'?`${user}今日は軽く身体を動かす日です。`:`${user}今日のメニューから取り組む種目を選びましょう。`;
+  }
+}
+function missionRewardLabel(mission){
+  const xp=Math.max(0,Math.floor(Number(mission.reward?.xp)||0));
+  const prefix=mission.status==='claimed'?'受取済み':mission.status==='completed'?'付与待ち':'報酬予定';
+  return xp?`${prefix} +${xp} XP`:prefix;
+}
+function createMissionCard(mission){
+  const node=document.querySelector('#missionTemplate').content.cloneNode(true);
+  const card=node.querySelector('.mission-card'),type=missionTypeMeta[mission.type]||{label:String(mission.type||'MISSION').toUpperCase()};
+  const status=missionStatusMeta[mission.status]||missionStatusMeta.active;
+  const tier=mission.presentation?.tier||'standard';
+  card.classList.add(`tier-${tier}`,`status-${mission.status}`);
+  card.setAttribute('aria-label',`${mission.presentation.title}、${status.label}、${mission.displayValue}/${mission.target}`);
+  node.querySelector('.mission-type').textContent=type.label;
+  node.querySelector('.mission-status').textContent=status.label;
+  node.querySelector('.mission-title').textContent=mission.presentation.title;
+  node.querySelector('.mission-description').textContent=mission.presentation.description||'';
+  node.querySelector('.mission-value').textContent=mission.displayValue;
+  node.querySelector('.mission-target').textContent=mission.target;
+  node.querySelector('.mission-reward').textContent=missionRewardLabel(mission);
+  node.querySelector('.mission-progress-rail span').style.width=`${mission.percent}%`;
+  return node;
+}
+function renderMissionGroup(type,groupSelector,listSelector,countSelector,missions){
+  const group=document.querySelector(groupSelector),list=document.querySelector(listSelector);
+  const types=Array.isArray(type)?type:[type];
+  const selected=missions.filter(mission=>types.includes(mission.type)),completed=selected.filter(mission=>mission.completed).length;
+  group.hidden=selected.length===0;
+  list.innerHTML='';
+  selected.forEach(mission=>list.appendChild(createMissionCard(mission)));
+  document.querySelector(countSelector).textContent=`${completed} / ${selected.length}`;
+}
+function renderMissionBoard(){
+  const loadState=document.querySelector('#missionLoadState');
+  const ready=Boolean(questPack&&questEvaluation);
+  loadState.hidden=ready;
+  if(!ready){
+    document.querySelector('#missionLoadTitle').textContent=questLoadError?'ミッションを読み込めませんでした':'ミッションを読み込んでいます';
+    document.querySelector('#missionLoadDescription').textContent=questLoadError?'通信状況をご確認ください。通常のトレーニング記録は継続できます。':'トレーニング記録はこのまま利用できます。';
+    ['#dailyMissionGroup','#weeklyMissionGroup','#extraMissionGroup'].forEach(selector=>document.querySelector(selector).hidden=true);
+    document.querySelector('#missionCompletedCount').textContent='0';
+    document.querySelector('#missionTotalCount').textContent='0';
+    document.querySelector('#missionClaimedCount').textContent='0';
+    document.querySelector('#missionOverviewBar').style.width='0%';
+    return;
+  }
+  const missions=QuestCore.buildMissionViewModels(questEvaluation,state.quests);
+  const completed=missions.filter(mission=>mission.completed).length,claimed=missions.filter(mission=>mission.claimed).length;
+  document.querySelector('#missionCompletedCount').textContent=completed;
+  document.querySelector('#missionTotalCount').textContent=missions.length;
+  document.querySelector('#missionClaimedCount').textContent=claimed;
+  document.querySelector('#missionOverviewBar').style.width=`${missions.length?Math.round(completed/missions.length*100):0}%`;
+  renderMissionGroup('daily','#dailyMissionGroup','#dailyMissionList','#dailyMissionCount',missions);
+  renderMissionGroup('weekly','#weeklyMissionGroup','#weeklyMissionList','#weeklyMissionCount',missions);
+  renderMissionGroup(['challenge','event','achievement'],'#extraMissionGroup','#extraMissionList','#extraMissionCount',missions);
+}
 function renderQuest(){
   const key=todayKey(),day=ensureDay(key),progress=getProgress(key),exercises=exercisesForKey(key);
   const completed=completedSetsForKey(key),required=requiredSetsForKey(key);
   const visible=questFilter==='all'?exercises:exercises.filter(ex=>ex.categories.includes(questFilter));
-  document.querySelector('#userHeading').textContent='トレーニング選択';
+  renderQuestMode();
+  renderMissionBoard();
   document.querySelector('#questProgressDone').textContent=completed;
   document.querySelector('#questProgressTotal').textContent=required;
   setBar('#progressBar',progress);
@@ -299,6 +393,17 @@ document.querySelector('#settingsCloseButton').addEventListener('click',()=>sett
 document.querySelector('#settingsForm').addEventListener('submit',event=>{event.preventDefault();state.userName=document.querySelector('#userNameInput').value.trim();state.trainerName=Core.trainerDisplayName(document.querySelector('#trainerNameInput').value);saveState();settingsDialog.close();render();});
 document.querySelector('#soundButton').addEventListener('click',()=>{state.sound=!state.sound;saveState();render();if(state.sound){tone(660,.08,'triangle');showToast('効果音 ON','success');}else showToast('効果音 OFF','undo');});
 document.querySelector('#levelUpClose').addEventListener('click',()=>{const o=document.querySelector('#levelUpOverlay');o.classList.remove('show');o.setAttribute('aria-hidden','true');});
+document.querySelectorAll('[data-quest-mode]').forEach(button=>{
+  button.addEventListener('click',()=>{questMode=button.dataset.questMode==='missions'?'missions':'training';renderQuest();});
+  button.addEventListener('keydown',event=>{
+    if(!['ArrowLeft','ArrowRight'].includes(event.key))return;
+    event.preventDefault();
+    const nextMode=questMode==='training'?'missions':'training';
+    questMode=nextMode;
+    renderQuest();
+    document.querySelector(`[data-quest-mode="${nextMode}"]`).focus();
+  });
+});
 document.querySelectorAll('[data-quest-filter]').forEach(button=>button.addEventListener('click',()=>{questFilter=button.dataset.questFilter||'all';renderQuest();}));
 document.querySelector('#workoutBackButton').addEventListener('click',closeWorkout);
 document.querySelector('#workoutReturnButton').addEventListener('click',closeWorkout);

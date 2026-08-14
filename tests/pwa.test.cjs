@@ -40,7 +40,7 @@ test('golden screen uses one runtime stylesheet and vector UI icons',()=>{
   assert.equal((css.match(/{/g)||[]).length,(css.match(/}/g)||[]).length,'CSS braces must be balanced');
 
   const sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');
-  assert.match(sw,/muscle-master-v14/);
+  assert.match(sw,/muscle-master-v15/);
   assert.doesNotMatch(sw,/\.\/style\.css|\.\/v3\.css|\.\/trainer-runtime\.css/);
 });
 
@@ -56,6 +56,28 @@ test('quest foundation loads JSON definitions and evaluates training events',()=
   assert.match(app,/QuestCore\.mergeQuestEvaluation/);
   assert.ok(pack.quests.some(quest=>quest.type==='daily'));
   assert.ok(pack.quests.some(quest=>quest.type==='weekly'));
+});
+
+test('mission board exposes progress, completion and receipt states without granting rewards',()=>{
+  const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
+  const app=fs.readFileSync(path.join(root,'app.js'),'utf8');
+  const core=fs.readFileSync(path.join(root,'quest-core.js'),'utf8');
+  const css=fs.readFileSync(path.join(root,'design-match.css'),'utf8');
+
+  for(const id of ['questTrainingPanel','questMissionPanel','missionCompletedCount','dailyMissionList','weeklyMissionList','extraMissionList','missionTemplate']){
+    assert.match(html,new RegExp(`id="${id}"`));
+  }
+  assert.match(html,/data-quest-mode="training"/);
+  assert.match(html,/data-quest-mode="missions"/);
+  assert.match(html,/ボーナスXPの実付与は次のアップデート/);
+  assert.match(app,/QuestCore\.buildMissionViewModels/);
+  assert.match(app,/active:\{label:'進行中'\}/);
+  assert.match(app,/completed:\{label:'達成済み'\}/);
+  assert.match(app,/claimed:\{label:'受取済み'\}/);
+  assert.match(core,/function buildMissionViewModels/);
+  assert.match(css,/\.quest-mode-button\s*\{[^}]*min-height:\s*44px/s);
+  assert.match(css,/\.mission-card\.status-completed/);
+  assert.doesNotMatch(app,/recordRewardClaim\(/);
 });
 
 test('training selection exposes readable filters and set status',()=>{
