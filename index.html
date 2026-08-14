@@ -10,21 +10,33 @@
   <link rel="manifest" href="./manifest.json" />
   <link rel="icon" href="./assets/icon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="./assets/icon-192.png" />
-  <link rel="stylesheet" href="./style.css" />
-  <link rel="stylesheet" href="./v3.css" />
   <link rel="stylesheet" href="./design-match.css" />
-  <link rel="stylesheet" href="./trainer-runtime.css" />
   <title>Muscle Master</title>
 </head>
 <body>
+  <svg class="svg-sprite" aria-hidden="true" width="0" height="0">
+    <symbol id="icon-sound" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4Z"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="icon-sound-off" viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4Z"/><path d="m16 9 5 6m0-6-5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="icon-settings" viewBox="0 0 24 24"><path fill-rule="evenodd" d="m13.9 2 .6 2.2c.6.2 1.1.5 1.6.9l2.2-.6 1.7 3-1.6 1.6c.1.6.1 1.2 0 1.8l1.6 1.6-1.7 3-2.2-.6c-.5.4-1 .7-1.6.9l-.6 2.2h-3.5l-.6-2.2c-.6-.2-1.1-.5-1.6-.9l-2.2.6-1.7-3 1.6-1.6a7 7 0 0 1 0-1.8L4.3 7.5l1.7-3 2.2.6c.5-.4 1-.7 1.6-.9l.6-2.2h3.5ZM12 13.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/></symbol>
+    <symbol id="icon-home" viewBox="0 0 24 24"><path d="M3 11.2 12 3l9 8.2v9.3h-6v-6h-6v6H3v-9.3Z"/></symbol>
+    <symbol id="icon-quest" viewBox="0 0 24 24"><path d="m5 4 5.2 5.2-2 2L3 6V4h2Zm14 0h2v2l-5.2 5.2-2-2L19 4ZM8.2 12.8l3 3-5 5H3v-3.2l5.2-4.8Zm7.6 0 5.2 4.8v3.2h-3.2l-5-5 3-3Z"/></symbol>
+    <symbol id="icon-status" viewBox="0 0 24 24"><path d="M4 19h3V9H4v10Zm6.5 0h3V4h-3v15Zm6.5 0h3v-7h-3v7Z"/></symbol>
+    <symbol id="icon-log" viewBox="0 0 24 24"><path d="M5 3h14v18H5V3Zm3 4h8V5H8v2Zm0 4h8V9H8v2Zm0 4h8v-2H8v2Zm0 4h5v-2H8v2Z"/></symbol>
+    <symbol id="icon-trophy" viewBox="0 0 24 24"><path d="M7 3h10v3h4v3c0 3-2 5-5 5h-.5a6 6 0 0 1-2.5 2.5V19h4v2H7v-2h4v-2.5A6 6 0 0 1 8.5 14H8c-3 0-5-2-5-5V6h4V3Zm0 5H5v1c0 1.7 1 2.8 2.5 3A9 9 0 0 1 7 9V8Zm10 0v1a9 9 0 0 1-.5 3C18 11.8 19 10.7 19 9V8h-2Z"/></symbol>
+    <symbol id="icon-flame" viewBox="0 0 24 24"><path d="M13.3 2c.7 4.5-2.8 5.2-1.4 8.2.7 1.5 2.2 1 2.6-.5.6 1.2 1.8 2.5 1.8 5.2 0 2.5-1.9 4.6-4.4 4.6S7.5 17.6 7.5 15c0-3.7 2.5-5.4 5.8-13Zm-1.6 11.2c-.2 1.7-1.6 2.1-1.6 3.5 0 1 .8 1.8 1.8 1.8s1.8-.8 1.8-1.8c0-1.5-1-2.4-2-3.5Z"/></symbol>
+    <symbol id="icon-stack" viewBox="0 0 24 24"><path d="m12 3 9 4-9 4-9-4 9-4Zm-7.7 7.6L12 14l7.7-3.4L21 13l-9 4-9-4 1.3-2.4Zm0 6L12 20l7.7-3.4L21 19l-9 4-9-4 1.3-2.4Z"/></symbol>
+    <symbol id="icon-dumbbell" viewBox="0 0 24 24"><path d="M2 9h2V7h3v4h10V7h3v2h2v6h-2v2h-3v-4H7v4H4v-2H2V9Z"/></symbol>
+    <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="m13 5 7 7-7 7-2-2 3.5-3.5H4v-3h10.5L11 7l2-2Z"/></symbol>
+    <symbol id="icon-spark" viewBox="0 0 24 24"><path d="m12 2 1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8L12 2Zm7 14 .8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8L19 16Z"/></symbol>
+  </svg>
   <div class="app-viewport">
     <div class="phone-frame">
       <header class="game-topbar">
         <span class="game-topbar-mark">MM</span>
         <span class="game-topbar-title">MUSCLE MASTER</span>
         <div class="game-topbar-tools">
-          <button id="soundButton" class="screen-tool" aria-label="効果音">♪</button>
-          <button id="settingsButton" class="screen-tool" aria-label="設定">⚙</button>
+          <button id="soundButton" class="screen-tool" aria-label="効果音" aria-pressed="true"><svg><use href="#icon-sound" /></svg></button>
+          <button id="settingsButton" class="screen-tool" aria-label="設定"><svg><use href="#icon-settings" /></svg></button>
         </div>
       </header>
 
@@ -36,6 +48,7 @@
             <div class="home-hero">
               <a class="home-logo" href="#home" data-tab-link="home" aria-label="Muscle Master ホーム">
                 <img src="./assets/logo.png" alt="マッスルマスター" />
+                <span>鍛えろ、記録せよ。強く生きろ。</span>
               </a>
 
               <section id="goldenPlayerCard" class="player-card">
@@ -53,7 +66,7 @@
               </section>
 
               <section class="rank-card">
-                <span class="rank-icon">🏆</span>
+                <span class="rank-icon"><svg><use href="#icon-trophy" /></svg></span>
                 <div><small>本日のメニュー</small><strong id="planName">全身A</strong><span id="planNote">脚・胸・腹をバランスよく</span></div>
                 <b id="weekdayChip">MON</b>
               </section>
@@ -78,8 +91,8 @@
             </div>
 
             <section class="home-summary">
-              <article><span>継続日数</span><strong><b id="streakText">0</b>日</strong></article>
-              <article><span>累計セット</span><strong id="totalSetsText">0</strong></article>
+              <article><span class="summary-icon flame"><svg><use href="#icon-flame" /></svg></span><div><small>継続日数</small><strong><b id="streakText">0</b>日</strong></div></article>
+              <article><span class="summary-icon stack"><svg><use href="#icon-stack" /></svg></span><div><small>累計セット</small><strong id="totalSetsText">0</strong></div></article>
             </section>
 
             <section id="goldenHomeStats" class="home-stats">
@@ -90,7 +103,7 @@
               <div class="home-stat-row" data-stat="endurance"><span class="stat-badge end">END</span><b>持久力</b><div class="stat-meter"><i></i></div><strong class="stat-level">Lv.1</strong></div>
             </section>
 
-            <button class="home-cta primary-button" data-tab-link="quest"><span>◆</span> 今日のトレーニング <b>→</b></button>
+            <button class="home-cta primary-button" data-tab-link="quest"><svg class="cta-mark"><use href="#icon-dumbbell" /></svg><span>今日のトレーニング</span><svg class="cta-arrow"><use href="#icon-arrow" /></svg></button>
             <div id="quickQuest" class="sr-only" aria-hidden="true"></div>
           </section>
         </section>
@@ -125,11 +138,11 @@
       </main>
 
       <nav class="bottom-nav" aria-label="メインナビゲーション">
-        <button class="nav-item active" data-tab-link="home"><span>⌂</span><b>ホーム</b></button>
-        <button class="nav-item" data-tab-link="quest"><span>⚔</span><b>クエスト</b></button>
-        <button class="nav-item" data-tab-link="status"><span>◇</span><b>ステータス</b></button>
-        <button class="nav-item" data-tab-link="log"><span>▤</span><b>記録</b></button>
-        <button id="goldenSettingsNav" class="nav-item" type="button"><span>⚙</span><b>設定</b></button>
+        <button class="nav-item active" data-tab-link="home"><svg><use href="#icon-home" /></svg><b>ホーム</b></button>
+        <button class="nav-item" data-tab-link="quest"><svg><use href="#icon-quest" /></svg><b>クエスト</b></button>
+        <button class="nav-item" data-tab-link="status"><svg><use href="#icon-status" /></svg><b>ステータス</b></button>
+        <button class="nav-item" data-tab-link="log"><svg><use href="#icon-log" /></svg><b>記録</b></button>
+        <button id="goldenSettingsNav" class="nav-item" type="button"><svg><use href="#icon-settings" /></svg><b>設定</b></button>
       </nav>
     </div>
   </div>
@@ -146,10 +159,17 @@
 
   <div id="levelUpOverlay" class="levelup-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="levelUpNumber">
     <div class="levelup-card">
+      <div class="levelup-kicker"><svg><use href="#icon-spark" /></svg><span>TRAINING RESULT</span><svg><use href="#icon-spark" /></svg></div>
       <p>LEVEL UP!</p>
       <strong id="levelUpNumber">LV. 2</strong>
       <img id="levelUpTrainerArt" class="levelup-trainer-art" src="./assets/trainers/rio/level-up.webp" alt="レベルアップを祝うリオ" />
       <span id="levelUpMessage">新しいレベルに到達！</span>
+      <section class="levelup-rewards" aria-label="成長した能力値">
+        <div><b class="stat-dot str">STR</b><span>筋力</span><strong>+1</strong></div>
+        <div><b class="stat-dot core">CORE</b><span>体幹</span><strong>+1</strong></div>
+        <div><b class="stat-dot mob">MOB</b><span>柔軟</span><strong>+1</strong></div>
+        <div><b class="stat-dot end">END</b><span>持久力</span><strong>+1</strong></div>
+      </section>
       <button id="levelUpClose" class="primary-button">続ける</button>
     </div>
   </div>

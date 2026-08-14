@@ -1,6 +1,6 @@
-const CACHE_NAME='muscle-master-v8';
+const CACHE_NAME='muscle-master-v9';
 const APP_SHELL=[
-  './','./index.html','./style.css','./v3.css','./design-match.css','./trainer-runtime.css',
+  './','./index.html','./design-match.css',
   './app-core.js','./trainer-data.js','./app.js','./trainer-runtime.js','./manifest.json',
   './assets/logo.png','./assets/icon.svg','./assets/icon-192.png','./assets/icon-512.png','./assets/icon-maskable-512.png',
   './assets/trainers/rio/manifest.json','./assets/trainers/rio/base-master.webp','./assets/trainers/rio/hero.webp','./assets/trainers/rio/portrait.webp','./assets/trainers/rio/level-up.webp',
