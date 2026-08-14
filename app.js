@@ -1,15 +1,23 @@
 const STORAGE_KEY='muscleMasterStateV2';
 const LEGACY_KEY='muscleMasterStateV1';
 const Core=window.MuscleMasterCore;
+const QUEST_XP_PER_SET=10;
 
 const exerciseCatalog={
-  squat:{id:'squat',kind:'脚・お尻',name:'スクワット',target:'10〜15回 × 3セット',sets:3,stats:{strength:3,endurance:1}},
-  pushup:{id:'pushup',kind:'胸・腕・肩',name:'プッシュアップ',target:'10〜20回 × 3セット',sets:3,stats:{strength:3,endurance:1}},
-  bridge:{id:'bridge',kind:'お尻・もも裏',name:'グルートブリッジ',target:'10〜15回 × 3セット',sets:3,stats:{strength:2,core:1}},
-  crunch:{id:'crunch',kind:'腹筋',name:'クランチ',target:'15〜20回 × 3セット',sets:3,stats:{core:3}},
-  plank:{id:'plank',kind:'体幹',name:'プランク',target:'20〜45秒 × 3セット',sets:3,stats:{core:3,endurance:1}},
-  mobility:{id:'mobility',kind:'柔軟・可動域',name:'クネクネ＆ストレッチ',target:'約3〜5分',sets:1,stats:{mobility:4}},
-  neck:{id:'neck',kind:'首・僧帽筋',name:'ネックアイソメトリック',target:'各方向 5〜10秒 × 2セット',sets:2,stats:{strength:1,core:1}}
+  squat:{id:'squat',kind:'脚・お尻',name:'スクワット',target:'10〜15回 × 3セット',sets:3,primaryCategory:'strength',categories:['strength','endurance'],stats:{strength:3,endurance:1}},
+  pushup:{id:'pushup',kind:'胸・腕・肩',name:'プッシュアップ',target:'10〜20回 × 3セット',sets:3,primaryCategory:'strength',categories:['strength','endurance'],stats:{strength:3,endurance:1}},
+  bridge:{id:'bridge',kind:'お尻・もも裏',name:'グルートブリッジ',target:'10〜15回 × 3セット',sets:3,primaryCategory:'strength',categories:['strength','core'],stats:{strength:2,core:1}},
+  crunch:{id:'crunch',kind:'腹筋',name:'クランチ',target:'15〜20回 × 3セット',sets:3,primaryCategory:'core',categories:['core'],stats:{core:3}},
+  plank:{id:'plank',kind:'体幹',name:'プランク',target:'20〜45秒 × 3セット',sets:3,primaryCategory:'core',categories:['core','endurance'],stats:{core:3,endurance:1}},
+  mobility:{id:'mobility',kind:'柔軟・可動域',name:'クネクネ＆ストレッチ',target:'約3〜5分',sets:1,primaryCategory:'mobility',categories:['mobility'],stats:{mobility:4}},
+  neck:{id:'neck',kind:'首・僧帽筋',name:'ネックアイソメトリック',target:'各方向 5〜10秒 × 2セット',sets:2,primaryCategory:'strength',categories:['strength','core'],stats:{strength:1,core:1}}
+};
+
+const questCategoryMeta={
+  strength:{label:'筋力',short:'STR',icon:'#icon-strength'},
+  core:{label:'体幹',short:'CORE',icon:'#icon-core'},
+  mobility:{label:'柔軟',short:'MOB',icon:'#icon-mobility'},
+  endurance:{label:'持久力',short:'END',icon:'#icon-endurance'}
 };
 
 const weeklyPlans={
@@ -41,6 +49,7 @@ function loadState(){
   return cloneDefault();
 }
 let state=loadState();
+let questFilter='all';
 state.stats={...defaultState.stats,...(state.stats||{})};state.days||={};
 function saveState(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
 
@@ -89,9 +98,54 @@ function confetti(){const layer=document.querySelector('#confetti');layer.innerH
 function showLevelUp(newLevel){document.querySelector('#levelUpNumber').textContent=`LV. ${newLevel}`;document.querySelector('#levelUpMessage').textContent=`${state.userName||'プレイヤー'}、新しいレベルに到達！`;const overlay=document.querySelector('#levelUpOverlay');overlay.classList.add('show');overlay.setAttribute('aria-hidden','false');playLevelUp();confetti();pulseTrainer();}
 function checkLevelUp(previousLevel){const now=level();if(now>previousLevel){state.lastShownLevel=now;saveState();showLevelUp(now);}}
 
-function renderPlanLabels(){const plan=planForDate();['#weekdayChip','#questDayChip'].forEach(id=>document.querySelector(id).textContent=plan.code);['#planName','#questPlanName'].forEach(id=>document.querySelector(id).textContent=plan.name);['#planNote','#questPlanNote'].forEach(id=>document.querySelector(id).textContent=plan.note);document.querySelector('#questDescription').textContent=plan.name==='回復日'?'今日は軽く身体を動かす日。疲れているなら完全休養でもOKです。':'無理に全部やらなくてOK。終えたセットだけ記録しましょう。';}
+function renderPlanLabels(){const plan=planForDate(),user=state.userName?`${state.userName}さん、`:'';['#weekdayChip','#questDayChip'].forEach(id=>document.querySelector(id).textContent=plan.code);['#planName','#questPlanName'].forEach(id=>document.querySelector(id).textContent=plan.name);['#planNote','#questPlanNote'].forEach(id=>document.querySelector(id).textContent=plan.note);document.querySelector('#questDescription').textContent=plan.name==='回復日'?`${user}今日は軽く身体を動かす日です。`:`${user}今日のメニューから取り組む種目を選びましょう。`;}
 function renderHome(){const key=todayKey(),progress=getProgress(key),lv=level();document.querySelector('#progressText').textContent=`${progress}%`;document.querySelector('#streakText').textContent=getStreak();document.querySelector('#totalSetsText').textContent=state.totalSets;document.querySelector('#trainerName').textContent=Core.trainerDisplayName(state.trainerName);document.querySelector('#trainerMessage').textContent=trainerMessage(progress);document.querySelector('#levelText').textContent=`LV. ${lv}`;document.querySelector('#xpText').textContent=`${xp()} XP`;document.querySelector('#heroTitle').innerHTML=state.userName?`${escapeHtml(state.userName)}を<br><em>1段階</em>アップデート。`:`今日の自分を<br><em>1段階</em>アップデート。`;const quick=document.querySelector('#quickQuest'),next=firstIncomplete();if(!next)quick.innerHTML='<div class="quick-item"><div><strong>本日のクエスト完了</strong><span>今日は回復まで含めて育成です。</span></div><button data-tab-link="status">成長を見る</button></div>';else quick.innerHTML=`<div class="quick-item"><div><strong>${next.ex.name} · SET ${next.index+1}</strong><span>${next.ex.kind}｜${next.ex.target}</span></div><button data-quick="${next.ex.id}" data-index="${next.index}">完了する</button></div>`;}
-function renderQuest(){const key=todayKey(),day=ensureDay(key),progress=getProgress(key),exercises=exercisesForKey(key);document.querySelector('#userHeading').textContent=state.userName?`${state.userName}の今日のトレーニング`:'今日のトレーニング';setBar('#progressBar',progress);const list=document.querySelector('#exerciseList');list.innerHTML='';const template=document.querySelector('#exerciseTemplate');exercises.forEach((ex,exIndex)=>{const node=template.content.cloneNode(true);node.querySelector('.exercise-number').textContent=String(exIndex+1).padStart(2,'0');node.querySelector('.exercise-kind').textContent=ex.kind;node.querySelector('.exercise-name').textContent=ex.name;node.querySelector('.exercise-target').textContent=ex.target;const buttons=node.querySelector('.set-buttons');day[ex.id].forEach((done,index)=>{const btn=document.createElement('button');btn.className=`set-button${done?' done':''}`;btn.textContent=done?'✓':index+1;btn.setAttribute('aria-label',`${ex.name} ${index+1}セット目`);btn.addEventListener('click',()=>toggleSet(ex,index));buttons.appendChild(btn);});list.appendChild(node);});}
+function renderQuest(){
+  const key=todayKey(),day=ensureDay(key),progress=getProgress(key),exercises=exercisesForKey(key);
+  const completed=completedSetsForKey(key),required=requiredSetsForKey(key);
+  const visible=questFilter==='all'?exercises:exercises.filter(ex=>ex.categories.includes(questFilter));
+  document.querySelector('#userHeading').textContent='トレーニング選択';
+  document.querySelector('#questProgressDone').textContent=completed;
+  document.querySelector('#questProgressTotal').textContent=required;
+  setBar('#progressBar',progress);
+  document.querySelectorAll('[data-quest-filter]').forEach(button=>{
+    const active=button.dataset.questFilter===questFilter;
+    button.classList.toggle('is-active',active);
+    button.setAttribute('aria-pressed',String(active));
+  });
+
+  const list=document.querySelector('#exerciseList');
+  list.innerHTML='';
+  const template=document.querySelector('#exerciseTemplate');
+  visible.forEach(ex=>{
+    const displayCategory=questFilter==='all'?ex.primaryCategory:questFilter;
+    const node=template.content.cloneNode(true),category=questCategoryMeta[displayCategory];
+    const completedForExercise=day[ex.id].filter(Boolean).length;
+    const card=node.querySelector('.exercise-card');
+    card.classList.add(`category-${displayCategory}`);
+    card.classList.toggle('is-complete',completedForExercise===ex.sets);
+    card.setAttribute('aria-label',`${ex.name}、${ex.target}、${completedForExercise}/${ex.sets}セット完了`);
+    node.querySelector('.exercise-icon use').setAttribute('href',category.icon);
+    node.querySelector('.exercise-kind').textContent=ex.kind;
+    node.querySelector('.exercise-category').textContent=category.short;
+    node.querySelector('.exercise-name').textContent=ex.name;
+    node.querySelector('.exercise-xp').textContent=`+${ex.sets*QUEST_XP_PER_SET} XP`;
+    node.querySelector('.exercise-target').textContent=ex.target;
+    node.querySelector('.exercise-progress').textContent=completedForExercise===ex.sets?'COMPLETE':`${completedForExercise} / ${ex.sets} セット完了`;
+    const buttons=node.querySelector('.set-buttons');
+    day[ex.id].forEach((done,index)=>{
+      const btn=document.createElement('button');
+      btn.className=`set-button${done?' done':''}`;
+      btn.textContent=done?'✓':index+1;
+      btn.setAttribute('aria-pressed',String(done));
+      btn.setAttribute('aria-label',`${ex.name} ${index+1}セット目${done?'を取り消す':'を完了にする'}`);
+      btn.addEventListener('click',()=>toggleSet(ex,index));
+      buttons.appendChild(btn);
+    });
+    list.appendChild(node);
+  });
+  document.querySelector('#exerciseEmptyState').hidden=visible.length!==0;
+}
 function renderStatus(){const lv=level(),lp=levelProgress();document.querySelector('#profileLevel').textContent=String(lv).padStart(2,'0');setBar('#levelBar',lp);document.querySelector('#levelCaption').textContent=lp===0&&xp()>0?'レベルアップ！ 次の100 XPへ':`次のレベルまで ${100-lp} XP`;[['strength','strengthBar','strengthValue'],['core','coreBar','coreValue'],['mobility','mobilityBar','mobilityValue'],['endurance','enduranceBar','enduranceValue']].forEach(([key,bar,val])=>{setBar(`#${bar}`,state.stats[key]||0);document.querySelector(`#${val}`).textContent=state.stats[key]||0;});const achievements=[{label:'🌱 はじめの1セット',ok:state.totalSets>=1},{label:'💪 10セット突破',ok:state.totalSets>=10},{label:'🔥 3日継続',ok:getStreak()>=3},{label:'⚔ 50セット突破',ok:state.totalSets>=50},{label:'👑 LV.5到達',ok:level()>=5}];document.querySelector('#achievementList').innerHTML=achievements.map(a=>`<span class="achievement${a.ok?'':' locked'}">${a.label}</span>`).join('');}
 function renderHistory(){const entries=Object.keys(state.days).map(key=>({key,done:completedSetsForKey(key),total:requiredSetsForKey(key),plan:planForKey(key).name})).filter(x=>x.done>0).sort((a,b)=>b.key.localeCompare(a.key)).slice(0,14);const root=document.querySelector('#historyList');if(!entries.length){root.innerHTML='<div class="empty-state">まだ記録がありません。<br>最初の1セットを始めましょう。</div>';return;}root.innerHTML=entries.map(e=>`<div class="history-row"><div><strong>${formatDate(e.key)} · ${e.plan}</strong><span>${e.done} / ${e.total} セット完了</span></div><span class="history-badge">${Math.min(100,Math.round(e.done/e.total*100))}%</span></div>`).join('');}
 function render(){renderPlanLabels();renderHome();renderQuest();renderStatus();renderHistory();const soundButton=document.querySelector('#soundButton'),soundIcon=soundButton.querySelector('use');soundButton.classList.toggle('muted-sound',!state.sound);soundButton.setAttribute('aria-pressed',String(state.sound));soundButton.setAttribute('aria-label',state.sound?'効果音をオフにする':'効果音をオンにする');if(soundIcon)soundIcon.setAttribute('href',state.sound?'#icon-sound':'#icon-sound-off');saveState();bindDynamicLinks();}
@@ -106,6 +160,7 @@ document.querySelector('#settingsCloseButton').addEventListener('click',()=>sett
 document.querySelector('#settingsForm').addEventListener('submit',event=>{event.preventDefault();state.userName=document.querySelector('#userNameInput').value.trim();state.trainerName=Core.trainerDisplayName(document.querySelector('#trainerNameInput').value);saveState();settingsDialog.close();render();});
 document.querySelector('#soundButton').addEventListener('click',()=>{state.sound=!state.sound;saveState();render();if(state.sound){tone(660,.08,'triangle');showToast('効果音 ON','success');}else showToast('効果音 OFF','undo');});
 document.querySelector('#levelUpClose').addEventListener('click',()=>{const o=document.querySelector('#levelUpOverlay');o.classList.remove('show');o.setAttribute('aria-hidden','true');});
+document.querySelectorAll('[data-quest-filter]').forEach(button=>button.addEventListener('click',()=>{questFilter=button.dataset.questFilter||'all';renderQuest();}));
 document.querySelector('#resetTodayButton').addEventListener('click',()=>{if(!confirm('今日のチェックをすべてリセットしますか？'))return;const day=ensureDay();for(const ex of exercisesForDate())(day[ex.id]||[]).forEach((done,i)=>{if(done){state.totalSets=Math.max(0,state.totalSets-1);addStats(ex,-1);}day[ex.id][i]=false;});saveState();render();showToast('今日の記録をリセットしました');});
 window.addEventListener('hashchange',()=>showView(location.hash.replace('#','')||'home'));
 if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));

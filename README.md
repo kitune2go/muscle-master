@@ -24,6 +24,10 @@
   - 金：全身C
   - 土：選択チャレンジ
   - 日：回復日
+- トレーニング選択画面
+  - 筋力 / 体幹 / 柔軟 / 持久力のカテゴリ絞り込み
+  - 回数・時間 / 獲得XP / セット完了数をカード内に表示
+  - カテゴリに該当しない日の空状態表示
 - セット完了ごとの +10 XP
 - レベルアップ演出 / 紙吹雪
 - Web Audio APIによる軽い効果音（ON/OFF可能）
@@ -50,6 +54,9 @@
 - `assets/trainer.svg` — オリジナルトレーナー素材
 - `manifest.json` — PWA設定
 - `sw.js` — オフラインキャッシュ
+- `docs/MASTER_SPEC_UPDATE_2026-08-15.md` — 現行MASTER_SPECの実装状況・優先順位更新
+- `docs/QUEST_ARCHITECTURE.md` — クエストの追加方式、報酬、演出の拡張方針
+- `docs/UI_TRAINING_SELECTION_QA.md` — トレーニング選択画面の確認基準
 
 ## GitHub Pages
 
