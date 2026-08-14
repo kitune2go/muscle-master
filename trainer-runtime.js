@@ -37,9 +37,8 @@
   }
 
   function syncProgress(){
-    const buttons=[...document.querySelectorAll('#exerciseList .set-button')];
-    const completed=buttons.filter(button=>button.classList.contains('done')).length;
-    const total=buttons.length;
+    const completed=numberFrom('#questProgressDone');
+    const total=numberFrom('#questProgressTotal');
     const percent=numberFrom('#progressText');
     const doneNode=document.querySelector('#goldenProgressDone');
     const totalNode=document.querySelector('#goldenProgressTotal');
@@ -104,6 +103,9 @@
 
     const levelUp=document.querySelector('#levelUpTrainerArt');
     if(levelUp)levelUp.src=current.states.levelUp||current.assets.levelUp;
+
+    const workout=document.querySelector('#workoutTrainerImage');
+    if(workout){workout.src=current.assets.portrait;workout.alt=`トレーナーの${current.displayName}`;}
 
     syncProfile(current);
     syncProgress();
