@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="マッスルマスター アイコン">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="35%" r="80%"><stop stop-color="#4b525d"/><stop offset=".55" stop-color="#20252d"/><stop offset="1" stop-color="#101318"/></radialGradient>
+    <linearGradient id="badge" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#f34b4f"/><stop offset="1" stop-color="#a71621"/></linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#ffe066"/><stop offset="1" stop-color="#e69916"/></linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="108" fill="url(#bg)"/>
+  <circle cx="256" cy="252" r="183" fill="none" stroke="#f0ad2d" stroke-width="14" opacity=".9"/>
+  <g fill="#11151b" stroke="#fff3d0" stroke-width="8">
+    <rect x="67" y="228" width="378" height="56" rx="24"/>
+    <rect x="74" y="169" width="52" height="174" rx="17"/><rect x="132" y="194" width="40" height="124" rx="14"/>
+    <rect x="340" y="194" width="40" height="124" rx="14"/><rect x="386" y="169" width="52" height="174" rx="17"/>
+  </g>
+  <path d="M134 119h244a34 34 0 0 1 34 34v206a34 34 0 0 1-34 34H134a34 34 0 0 1-34-34V153a34 34 0 0 1 34-34z" fill="url(#badge)" stroke="#0b0d11" stroke-width="16"/>
+  <path d="M151 340V170h57l48 88 48-88h57v170h-55v-83l-34 62h-32l-34-62v83z" fill="url(#gold)" stroke="#0b0d11" stroke-width="12" stroke-linejoin="round" paint-order="stroke fill"/>
+  <path d="M149 143h214" stroke="#ff9aa0" stroke-width="11" stroke-linecap="round" opacity=".75"/>
+</svg>

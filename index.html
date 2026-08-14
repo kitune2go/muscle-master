@@ -5,18 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#b5222a" />
   <meta name="description" content="育成ゲーム風トレーニング記録アプリ Muscle Master" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" href="./assets/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="./assets/icon-192.png" />
   <link rel="stylesheet" href="./style.css" />
   <link rel="stylesheet" href="./v3.css" />
   <link rel="stylesheet" href="./design-match.css" />
+  <link rel="stylesheet" href="./trainer-runtime.css" />
   <title>Muscle Master</title>
 </head>
 <body>
   <div class="top-noise" aria-hidden="true"></div>
   <header class="topbar">
     <a class="brand" href="#home" data-tab-link="home" aria-label="Muscle Master ホーム">
-      <span class="brand-mark">M</span>
-      <span><b>MUSCLE MASTER</b><small>BODY TRAINING RPG</small></span>
+      <img class="brand-logo" src="./assets/logo.png" alt="マッスルマスター" />
     </a>
     <div class="top-actions">
       <button id="soundButton" class="round-button" aria-label="効果音">♪</button>
@@ -43,7 +47,7 @@
         </div>
         <div class="trainer-stage" id="trainerStage">
           <div class="trainer-aura" aria-hidden="true"></div>
-          <img src="./assets/rio-hero.webp" alt="応援トレーナーのリオ" class="trainer-art" id="trainerArt" />
+          <img src="./assets/trainers/rio/hero.webp" alt="応援トレーナーのリオ" class="trainer-art" id="trainerArt" />
           <div class="trainer-badge"><span>TRAINER</span><b id="trainerName">トレーナー</b></div>
         </div>
       </section>
@@ -101,9 +105,9 @@
     <button class="nav-item" data-tab-link="log"><span>▤</span><b>記録</b></button>
   </nav>
 
-  <dialog id="settingsDialog">
+  <dialog id="settingsDialog" aria-labelledby="settingsTitle">
     <form method="dialog" id="settingsForm" class="settings-form">
-      <div class="section-heading"><div><p class="mini-label">PROFILE SETTINGS</p><h2>設定</h2></div><button class="round-button" value="cancel" aria-label="閉じる">✕</button></div>
+      <div class="section-heading"><div><p class="mini-label">PROFILE SETTINGS</p><h2 id="settingsTitle">設定</h2></div><button id="settingsCloseButton" class="round-button" type="button" aria-label="変更を保存せず閉じる">✕</button></div>
       <label>あなたの名前<input id="userNameInput" maxlength="20" placeholder="例：タナカ" /></label>
       <label>応援キャラの名前<input id="trainerNameInput" maxlength="20" placeholder="例：リオ" /></label>
       <p class="setting-note">名前はいつでも変更できます。記録データには影響しません。</p>
@@ -111,7 +115,7 @@
     </form>
   </dialog>
 
-  <div id="levelUpOverlay" class="levelup-overlay" aria-hidden="true">
+  <div id="levelUpOverlay" class="levelup-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="levelUpNumber">
     <div class="levelup-card">
       <p>LEVEL UP!</p><strong id="levelUpNumber">LV. 2</strong><span id="levelUpMessage">新しいレベルに到達！</span><button id="levelUpClose" class="primary-button">続ける</button>
     </div>
@@ -127,6 +131,9 @@
     </article>
   </template>
 
+  <script src="./app-core.js"></script>
+  <script src="./trainer-data.js"></script>
   <script src="./app.js" defer></script>
+  <script src="./trainer-runtime.js" defer></script>
 </body>
 </html>

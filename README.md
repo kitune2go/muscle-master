@@ -36,6 +36,9 @@
 - 旧v1記録からの自動移行
 - `localStorage` による端末内保存
 - PWA / オフラインキャッシュ
+- ブランドロゴ / PWAアイコン（通常・maskable）
+- 前日までの継続記録を当日の開始前にも保持
+- GitHub Actionsによる依存なしのPWA検証
 
 ## Files
 
@@ -43,6 +46,7 @@
 - `style.css` — 基本UI / デザインシステム
 - `v3.css` — ゲーム演出 / 曜日プログラムUI
 - `app.js` — 記録・曜日別メニュー・育成ロジック
+- `app-core.js` — XP・レベル・継続日数などの共通ロジック
 - `assets/trainer.svg` — オリジナルトレーナー素材
 - `manifest.json` — PWA設定
 - `sw.js` — オフラインキャッシュ
@@ -50,3 +54,9 @@
 ## GitHub Pages
 
 `main` ブランチのルートをGitHub Pagesで公開する構成です。
+
+## Validation
+
+```sh
+npm run check
+```
