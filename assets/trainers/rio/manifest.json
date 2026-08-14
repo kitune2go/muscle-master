@@ -1,0 +1,157 @@
+{
+  "assetVersion": "1.0.0",
+  "trainerId": "rio",
+  "displayName": "リオ",
+  "status": "canonical",
+  "themeColor": "#E4002B",
+  "personality": "energetic-hotblooded",
+  "assets": {
+    "baseMaster": {
+      "path": "assets/trainers/rio/base-master.webp",
+      "width": 384,
+      "height": 576,
+      "sha256": "db832df43d1fe8e8e60ff37d8039dfc92926b80b101092aadfddeba3b255a8ea",
+      "bytes": 43532,
+      "transparentBackground": true
+    },
+    "hero": {
+      "path": "assets/trainers/rio/hero.webp",
+      "width": 768,
+      "height": 1024,
+      "sha256": "87eb1d444df4a866e0efc91dbeb3c9ed16a204f7e000dd8da23481b46c1e538c",
+      "bytes": 176094,
+      "transparentBackground": true
+    },
+    "portrait": {
+      "path": "assets/trainers/rio/portrait.webp",
+      "width": 512,
+      "height": 512,
+      "sha256": "52d8daecc8001e7df0c0444eaa56ed94f20ab75f0204d59371081d4708be0137",
+      "bytes": 65404,
+      "transparentBackground": true
+    },
+    "levelUp": {
+      "path": "assets/trainers/rio/level-up.webp",
+      "width": 768,
+      "height": 1024,
+      "sha256": "f2e28732abb8c19fc99638a99e64dd34bd066dfe397df9af304ccb4773ae6d21",
+      "bytes": 256124,
+      "transparentBackground": true
+    },
+    "expressions": {
+      "neutral": {
+        "path": "assets/trainers/rio/expressions/neutral.webp",
+        "width": 384,
+        "height": 384,
+        "sha256": "3ed9bf283f8948ea1aad5cc7bf9880f4eb3ff5396c932fb8537e9089f9fb7671",
+        "bytes": 52298,
+        "transparentBackground": true
+      },
+      "smile": {
+        "path": "assets/trainers/rio/expressions/smile.webp",
+        "width": 384,
+        "height": 384,
+        "sha256": "a17beb4d7d7edc9f4348fc7510039a977ca79d7765f2d5a9c192b79fe5f3c599",
+        "bytes": 53444,
+        "transparentBackground": true
+      },
+      "cheer": {
+        "path": "assets/trainers/rio/expressions/cheer.webp",
+        "width": 384,
+        "height": 384,
+        "sha256": "79e0622734d20e0c8cc2172e6c383500f4bca16ee3d306b81899d08257135b2e",
+        "bytes": 54802,
+        "transparentBackground": true
+      },
+      "blush": {
+        "path": "assets/trainers/rio/expressions/blush.webp",
+        "width": 384,
+        "height": 384,
+        "sha256": "1d610160aa3a588f4892b10c849a8158a3ca61b557a51cc0e5de1d76eab3cfeb",
+        "bytes": 55772,
+        "transparentBackground": true
+      },
+      "serious": {
+        "path": "assets/trainers/rio/expressions/serious.webp",
+        "width": 384,
+        "height": 384,
+        "sha256": "8c95cb81fb2e61863d49cc2511d5293cc7188858eca1e83c22d271be8bf2a873",
+        "bytes": 51430,
+        "transparentBackground": true
+      },
+      "tired": {
+        "path": "assets/trainers/rio/expressions/tired.webp",
+        "width": 384,
+        "height": 384,
+        "sha256": "a92c93ff968329a466abd11444866abcd5774fd820e24db3abea8e083b70c3ec",
+        "bytes": 52006,
+        "transparentBackground": true
+      },
+      "angry": {
+        "path": "assets/trainers/rio/expressions/angry.webp",
+        "width": 384,
+        "height": 384,
+        "sha256": "9e66d4f1fe8a1ddd36ea9ffdae445bc4a78f322040a80e00dd1c8800523893a9",
+        "bytes": 52232,
+        "transparentBackground": true
+      },
+      "achieved": {
+        "path": "assets/trainers/rio/expressions/achieved.webp",
+        "width": 384,
+        "height": 384,
+        "sha256": "e91409b8e02c0945b6b8693dbe7d8d6d4e7319683c164cf68fc670ddcbbe6386",
+        "bytes": 49846,
+        "transparentBackground": true
+      }
+    },
+    "chibi": {
+      "normal": {
+        "path": "assets/trainers/rio/chibi/normal.webp",
+        "width": 384,
+        "height": 384,
+        "sha256": "568db2ba25510211be17c1d11ed977e337e0a79424a2df325f7314b1ea8d7921",
+        "bytes": 41964,
+        "transparentBackground": true
+      },
+      "cheer": {
+        "path": "assets/trainers/rio/chibi/cheer.webp",
+        "width": 384,
+        "height": 384,
+        "sha256": "2cc5c3ceebf211b3576a9eb46d65a4c9222035bcf45b94d55bc91d039b80ccc0",
+        "bytes": 35290,
+        "transparentBackground": true
+      },
+      "struggle": {
+        "path": "assets/trainers/rio/chibi/struggle.webp",
+        "width": 384,
+        "height": 384,
+        "sha256": "513ac00424d3cac7b4958542c44d214326deb2331b0e53d6310f6b88ccdd7f80",
+        "bytes": 48886,
+        "transparentBackground": true
+      },
+      "rest": {
+        "path": "assets/trainers/rio/chibi/rest.webp",
+        "width": 384,
+        "height": 384,
+        "sha256": "469256d8c065f85ca9427509aa82aefac4b05247862b3b0f5c09a48bc66a9684",
+        "bytes": 42896,
+        "transparentBackground": true
+      },
+      "achieved": {
+        "path": "assets/trainers/rio/chibi/achieved.webp",
+        "width": 384,
+        "height": 384,
+        "sha256": "6ad31e5cb5be629f9283ac518f75fd5a143bb9d854b4cc4a543616e650af40df",
+        "bytes": 39536,
+        "transparentBackground": true
+      }
+    }
+  },
+  "dialogue": {
+    "home": [],
+    "trainingStart": [],
+    "trainingComplete": [],
+    "rest": [],
+    "levelUp": []
+  }
+}
