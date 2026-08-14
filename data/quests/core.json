@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "packId": "core_quests_v1",
+  "locale": "ja-JP",
+  "quests": [
+    {
+      "id": "daily_first_set",
+      "type": "daily",
+      "metric": "completed_sets",
+      "target": 1,
+      "filters": {},
+      "reward": { "xp": 5 },
+      "presentation": {
+        "title": "最初の一歩",
+        "description": "今日のトレーニングを1セット完了する",
+        "tier": "minor",
+        "media": { "imageUrl": null, "audioUrl": null },
+        "trainerDialogue": { "default": "まずは1セット。今日の一歩を記録できたわ。" }
+      }
+    },
+    {
+      "id": "daily_complete_3_sets",
+      "type": "daily",
+      "metric": "completed_sets",
+      "target": 3,
+      "filters": {},
+      "reward": { "xp": 20 },
+      "presentation": {
+        "title": "デイリー3セット",
+        "description": "今日のトレーニングを合計3セット完了する",
+        "tier": "standard",
+        "media": { "imageUrl": null, "audioUrl": null },
+        "trainerDialogue": { "default": "3セット達成！ 小さな積み重ねが、いちばん強いのよ。" }
+      }
+    },
+    {
+      "id": "daily_core_2_sets",
+      "type": "daily",
+      "metric": "completed_sets",
+      "target": 2,
+      "filters": { "categories": ["core"] },
+      "reward": { "xp": 15 },
+      "presentation": {
+        "title": "体幹を起こせ",
+        "description": "体幹カテゴリの種目を合計2セット完了する",
+        "tier": "standard",
+        "media": { "imageUrl": null, "audioUrl": null },
+        "trainerDialogue": { "default": "軸が安定してきたわ。呼吸を止めずに続けましょう。" }
+      }
+    },
+    {
+      "id": "weekly_active_3_days",
+      "type": "weekly",
+      "metric": "active_days",
+      "target": 3,
+      "filters": {},
+      "reward": { "xp": 50 },
+      "presentation": {
+        "title": "週3日の育成記録",
+        "description": "月曜から日曜までの間に3日トレーニングする",
+        "tier": "major",
+        "media": { "imageUrl": null, "audioUrl": null },
+        "trainerDialogue": { "default": "3日続けた事実は消えないわ。今週も立派な前進ね。" }
+      }
+    },
+    {
+      "id": "weekly_complete_12_sets",
+      "type": "weekly",
+      "metric": "completed_sets",
+      "target": 12,
+      "filters": {},
+      "reward": { "xp": 60 },
+      "presentation": {
+        "title": "週間12セット",
+        "description": "月曜から日曜までに合計12セット完了する",
+        "tier": "major",
+        "media": { "imageUrl": null, "audioUrl": null },
+        "trainerDialogue": { "default": "週間目標達成！ 回復まで含めて、今週の育成は成功よ。" }
+      }
+    }
+  ]
+}

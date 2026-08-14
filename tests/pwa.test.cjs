@@ -17,7 +17,7 @@ test('manifest icons and app shell assets exist',()=>{
     'maskable icon must use a full-bleed background'
   );
   const sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');
-  for(const required of ['app-core.js','assets/logo.png','assets/icon-192.png','assets/icon-512.png'])assert.match(sw,new RegExp(required.replace('.','\\.')));
+  for(const required of ['app-core.js','quest-core.js','data/quests/core.json','assets/logo.png','assets/icon-192.png','assets/icon-512.png'])assert.match(sw,new RegExp(required.replace('.','\\.')));
 });
 
 test('settings close is a non-submit button',()=>{
@@ -40,8 +40,22 @@ test('golden screen uses one runtime stylesheet and vector UI icons',()=>{
   assert.equal((css.match(/{/g)||[]).length,(css.match(/}/g)||[]).length,'CSS braces must be balanced');
 
   const sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');
-  assert.match(sw,/muscle-master-v13/);
+  assert.match(sw,/muscle-master-v14/);
   assert.doesNotMatch(sw,/\.\/style\.css|\.\/v3\.css|\.\/trainer-runtime\.css/);
+});
+
+test('quest foundation loads JSON definitions and evaluates training events',()=>{
+  const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
+  const app=fs.readFileSync(path.join(root,'app.js'),'utf8');
+  const pack=JSON.parse(fs.readFileSync(path.join(root,'data','quests','core.json'),'utf8'));
+  assert.match(html,/<script src="\.\/quest-core\.js"><\/script>/);
+  assert.ok(html.indexOf('./quest-core.js')<html.indexOf('./app.js'));
+  assert.match(app,/QUEST_PACK_URL='\.\/data\/quests\/core\.json'/);
+  assert.match(app,/training:set-completed/);
+  assert.match(app,/QuestCore\.evaluateQuestPack/);
+  assert.match(app,/QuestCore\.mergeQuestEvaluation/);
+  assert.ok(pack.quests.some(quest=>quest.type==='daily'));
+  assert.ok(pack.quests.some(quest=>quest.type==='weekly'));
 });
 
 test('training selection exposes readable filters and set status',()=>{

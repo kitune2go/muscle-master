@@ -33,6 +33,11 @@
   - 回数種目の経過計測、時間種目のカウントダウン
   - 開始 / 一時停止 / 再開 / リセット / セット完了
   - トレーナー名と画像を操作情報から分離した安全レイアウト
+- JSONクエスト基盤
+  - デイリー／ウィークリーを安定IDの定義データとして管理
+  - 既存トレーニング履歴から進捗を毎回再計算
+  - 初回達成と報酬受取をクエスト期間単位で重複防止
+  - 画像・音声URL・トレーナー台詞の差し替え口を定義
 - セット完了ごとの +10 XP
 - レベルアップ演出 / 紙吹雪
 - Web Audio APIによる軽い効果音（ON/OFF可能）
@@ -56,17 +61,22 @@
 - `style.css` / `v3.css` — 旧UIの履歴ファイル（実行時は未使用）
 - `app.js` — 記録・曜日別メニュー・育成ロジック
 - `app-core.js` — XP・レベル・継続日数などの共通ロジック
+- `quest-core.js` — クエスト期間、進捗評価、初回達成、報酬受取台帳の共通ロジック
+- `data/quests/core.json` — デイリー／ウィークリーのクエスト定義パック
 - `assets/trainer.svg` — オリジナルトレーナー素材
 - `manifest.json` — PWA設定
 - `sw.js` — オフラインキャッシュ
 - `docs/MASTER_SPEC_UPDATE_2026-08-15.md` — 現行MASTER_SPECの実装状況・優先順位更新
 - `docs/QUEST_ARCHITECTURE.md` — クエストの追加方式、報酬、演出の拡張方針
+- `docs/QUEST_DATA_QA.md` — JSON定義・評価器・保存互換性の確認基準
 - `docs/UI_TRAINING_SELECTION_QA.md` — トレーニング選択画面の確認基準
 - `docs/UI_TRAINING_EXECUTION_QA.md` — トレーニング実行画面・タイマーの確認基準
 
 ## GitHub Pages
 
 `main` ブランチのルートをGitHub Pagesで公開する構成です。
+
+クエスト基盤は現在、進捗評価と達成記録までを担当します。ミッション表示、ボーナスXPの実付与、画像・音声演出は次工程で接続します。
 
 ## Validation
 
