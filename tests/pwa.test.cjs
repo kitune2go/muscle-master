@@ -40,6 +40,13 @@ test('golden screen uses one runtime stylesheet and vector UI icons',()=>{
   assert.equal((css.match(/{/g)||[]).length,(css.match(/}/g)||[]).length,'CSS braces must be balanced');
 
   const sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');
-  assert.match(sw,/muscle-master-v9/);
+  assert.match(sw,/muscle-master-v10/);
   assert.doesNotMatch(sw,/\.\/style\.css|\.\/v3\.css|\.\/trainer-runtime\.css/);
+});
+
+test('home trainer is clipped to the hero and status stays isolated',()=>{
+  const css=fs.readFileSync(path.join(root,'design-match.css'),'utf8');
+  assert.match(css,/\.home-hero\s*\{[^}]*overflow:\s*hidden[^}]*contain:\s*paint/s);
+  assert.match(css,/\.trainer-stage\s*\{[^}]*width:\s*210px[^}]*overflow:\s*hidden/s);
+  assert.match(css,/\.home-stats\s*\{\s*position:\s*relative[^}]*overflow:\s*hidden[^}]*isolation:\s*isolate/s);
 });

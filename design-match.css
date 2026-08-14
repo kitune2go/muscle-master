@@ -114,49 +114,28 @@ svg {
 }
 
 .game-topbar {
-  position: sticky;
-  top: 0;
-  z-index: 60;
-  height: 34px;
+  position: absolute;
+  z-index: 70;
+  top: 7px;
+  right: 8px;
+  height: auto;
   display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 0 9px;
+  padding: 0;
   color: #fff;
-  background: linear-gradient(#3a424e, #1b2028 62%, #12161c);
-  border-bottom: 2px solid #06080a;
-  box-shadow: inset 0 1px #ffffff2b, 0 2px 0 #0004;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
 }
 
-.game-topbar-mark {
-  display: grid;
-  place-items: center;
-  width: 26px;
-  height: 21px;
-  color: var(--gold-hi);
-  background: linear-gradient(#ef4d58, #99141e);
-  border: 1px solid #681018;
-  border-radius: 5px;
-  box-shadow: inset 0 1px #ff9da2, 0 2px 0 #08090c;
-  font-family: var(--font-display);
-  font-size: 0.48rem;
-  font-weight: 1000;
-  transform: skew(-5deg);
-}
-
+.game-topbar-mark,
 .game-topbar-title {
-  color: #e5e8ed;
-  font-family: var(--font-display);
-  font-size: 0.56rem;
-  font-weight: 1000;
-  letter-spacing: 0.16em;
-  text-shadow: 0 1px #000;
+  display: none;
 }
 
 .game-topbar-tools {
   display: flex;
   gap: 5px;
-  margin-left: auto;
 }
 
 .screen-tool {
@@ -166,8 +145,8 @@ svg {
   height: 26px;
   padding: 0;
   color: #fff;
-  background: linear-gradient(#4a5360, #262c35);
-  border: 1px solid #717987;
+  background: linear-gradient(#424a55e8, #20252de8);
+  border: 1px solid #7b8492;
   border-radius: 6px;
   box-shadow: inset 0 1px #fff4, 0 2px 0 #07090c;
 }
@@ -196,7 +175,7 @@ svg {
 
 .view {
   display: none;
-  min-height: calc(100svh - 110px);
+  min-height: calc(100svh - 76px);
 }
 
 .view.active {
@@ -213,7 +192,7 @@ svg {
 
 .home-board {
   position: relative;
-  min-height: calc(100svh - 110px);
+  min-height: calc(100svh - 76px);
   margin: 0 -1px;
   padding: 0 5px 13px;
   background:
@@ -225,10 +204,11 @@ svg {
 
 .home-hero {
   position: relative;
-  height: 430px;
+  height: 424px;
   margin: 0 -5px 8px;
   overflow: hidden;
   isolation: isolate;
+  contain: paint;
   background:
     radial-gradient(circle at 76% 30%, #fff 0 14%, #fff8ebaa 29%, transparent 52%),
     linear-gradient(153deg, #fff8e9 0 66%, #ce2d3a 66.2% 77%, #242a33 77.2% 100%);
@@ -280,7 +260,7 @@ svg {
   z-index: 21;
   top: 8px;
   left: 9px;
-  width: 168px;
+  width: 184px;
   color: #202228;
   text-decoration: none;
 }
@@ -293,7 +273,7 @@ svg {
 .home-logo span {
   display: block;
   width: max-content;
-  max-width: 170px;
+  max-width: 184px;
   margin: -2px 0 0 13px;
   font-family: var(--font-display);
   font-size: 0.47rem;
@@ -316,13 +296,13 @@ svg {
 .player-card {
   position: absolute;
   z-index: 18;
-  top: 104px;
+  top: 108px;
   left: 9px;
-  width: 220px;
+  width: 190px;
   height: 64px;
   display: grid;
-  grid-template-columns: 45px minmax(0, 1fr) 59px;
-  gap: 7px;
+  grid-template-columns: 42px minmax(0, 1fr) 50px;
+  gap: 5px;
   align-items: center;
   padding: 6px 7px;
   border-radius: 10px;
@@ -342,8 +322,8 @@ svg {
 
 .player-card > img {
   position: relative;
-  width: 43px;
-  height: 43px;
+  width: 40px;
+  height: 40px;
   margin-left: 3px;
   object-fit: cover;
   object-position: 50% 17%;
@@ -369,7 +349,7 @@ svg {
   display: block;
   overflow: hidden;
   font-family: var(--font-display);
-  font-size: 0.84rem;
+  font-size: 0.8rem;
   line-height: 1.05;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -396,7 +376,7 @@ svg {
 .player-level b {
   color: var(--red-deep);
   font-family: var(--font-display);
-  font-size: 0.74rem;
+  font-size: 0.7rem;
 }
 
 .player-level > span:not(.xp-track) {
@@ -427,13 +407,13 @@ svg {
 .rank-card {
   position: absolute;
   z-index: 17;
-  top: 175px;
+  top: 179px;
   left: 9px;
-  width: 218px;
+  width: 190px;
   min-height: 62px;
   display: grid;
-  grid-template-columns: 39px minmax(0, 1fr) 35px;
-  gap: 7px;
+  grid-template-columns: 37px minmax(0, 1fr) 32px;
+  gap: 5px;
   align-items: center;
   padding: 5px 7px;
   border-radius: 9px;
@@ -473,7 +453,7 @@ svg {
 
 .rank-card div span {
   display: block;
-  max-width: 112px;
+  max-width: 92px;
   overflow: hidden;
   color: var(--muted);
   font-size: 0.44rem;
@@ -497,23 +477,25 @@ svg {
 .trainer-stage {
   position: absolute;
   z-index: 7;
-  top: 22px;
-  right: -50px;
-  width: 326px;
-  height: 388px;
+  top: 55px;
+  right: -2px;
+  width: 210px;
+  height: 298px;
   min-height: 0;
   display: flex;
   align-items: flex-end;
   justify-content: flex-end;
+  overflow: hidden;
+  clip-path: inset(0 0 0 20px);
   pointer-events: none;
 }
 
 .trainer-aura {
   position: absolute;
-  right: 24px;
-  bottom: 28px;
-  width: 270px;
-  height: 270px;
+  right: 0;
+  bottom: 18px;
+  width: 205px;
+  height: 205px;
   background:
     radial-gradient(circle, #fff 0 12%, #ffe9bdad 31%, #ffcc755c 49%, transparent 72%);
   border-radius: 50%;
@@ -549,8 +531,8 @@ svg {
 .trainer-badge {
   position: absolute;
   z-index: 8;
-  right: 20px;
-  bottom: 54px;
+  right: 7px;
+  bottom: 20px;
   min-width: 65px;
   padding: 5px 8px;
   color: #fff;
@@ -580,7 +562,7 @@ svg {
   z-index: 22;
   bottom: 14px;
   left: 9px;
-  width: 222px;
+  width: 52%;
   min-height: 82px;
   display: grid;
   grid-template-columns: 51px minmax(0, 1fr);
@@ -597,9 +579,9 @@ svg {
   content: "";
   position: absolute;
   top: 25px;
-  right: -12px;
-  width: 20px;
-  height: 20px;
+  right: -7px;
+  width: 12px;
+  height: 12px;
   background: #fff8eb;
   border-top: 2px solid #a51a25;
   border-right: 2px solid #a51a25;
@@ -644,7 +626,7 @@ svg {
   z-index: 21;
   right: 9px;
   bottom: 14px;
-  width: 172px;
+  width: 40%;
   min-height: 92px;
   padding: 8px 10px;
   border-radius: 9px;
@@ -767,36 +749,52 @@ svg {
 }
 
 .home-stats {
+  position: relative;
+  z-index: 10;
   margin: 0 1px 9px;
-  padding: 8px 9px 7px;
+  padding: 10px 10px 8px;
+  overflow: hidden;
+  isolation: isolate;
+  background: linear-gradient(#fffefa, #f4dfbc);
   border: 1.5px solid #9c805c;
   border-radius: 9px;
   box-shadow: 0 3px 0 #987242, inset 0 1px #fff;
+}
+
+.home-stats::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--red), var(--gold) 62%, var(--nav));
 }
 
 .home-stats-heading {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 3px;
-  padding-bottom: 4px;
+  margin-bottom: 4px;
+  padding: 1px 1px 5px;
   border-bottom: 1px solid #c9ae88;
 }
 
 .home-stats-heading strong {
   font-family: var(--font-display);
-  font-size: 0.67rem;
+  font-size: 0.74rem;
 }
 
 .home-stats-heading span {
   color: var(--red);
-  font-size: 0.41rem;
+  font-size: 0.44rem;
   font-weight: 1000;
   letter-spacing: 0.13em;
 }
 
 .home-stat-row {
-  min-height: 26px;
+  min-height: 29px;
   display: grid;
   grid-template-columns: 32px 38px minmax(0, 1fr) 40px;
   gap: 6px;
@@ -804,7 +802,7 @@ svg {
 }
 
 .home-stat-row > b {
-  font-size: 0.54rem;
+  font-size: 0.58rem;
 }
 
 .stat-badge,
@@ -840,7 +838,7 @@ svg {
 }
 
 .stat-meter {
-  height: 10px;
+  height: 11px;
   overflow: hidden;
   background: #d9d0c1;
   border: 1px solid #9a8b79;
@@ -871,7 +869,9 @@ svg {
 }
 
 .stat-level {
-  font-size: 0.48rem;
+  color: #42352c;
+  font-family: var(--font-display);
+  font-size: 0.53rem;
   text-align: right;
 }
 
@@ -1345,7 +1345,7 @@ svg {
 }
 
 .nav-item b {
-  font-size: 0.46rem;
+  font-size: 0.5rem;
 }
 
 .nav-item::after {
@@ -1790,6 +1790,10 @@ dialog::backdrop {
   }
 
   .game-topbar {
+    top: 17px;
+  }
+
+  .home-hero {
     border-radius: 16px 16px 0 0;
   }
 
@@ -1800,33 +1804,34 @@ dialog::backdrop {
 
 @media (max-width: 390px) {
   .home-hero {
-    height: 420px;
+    height: 418px;
   }
 
   .home-logo {
-    width: 157px;
+    width: 170px;
   }
 
   .player-card {
-    width: 208px;
+    width: 177px;
   }
 
   .rank-card {
-    width: 207px;
+    width: 177px;
   }
 
   .trainer-stage {
-    right: -58px;
-    width: 310px;
-    height: 375px;
+    right: -2px;
+    width: 192px;
+    height: 288px;
+    clip-path: none;
   }
 
   .trainer-speech {
-    width: 202px;
+    width: 52%;
   }
 
   .today-achievement {
-    width: 160px;
+    width: 40%;
   }
 
   .home-stat-row {
@@ -1836,25 +1841,28 @@ dialog::backdrop {
 
 @media (max-width: 350px) {
   .home-logo {
-    width: 145px;
+    width: 154px;
   }
 
   .player-card {
-    top: 99px;
-    width: 193px;
+    top: 102px;
+    width: 166px;
+    grid-template-columns: 39px minmax(0, 1fr) 44px;
   }
 
   .rank-card {
-    top: 169px;
-    width: 193px;
+    top: 173px;
+    width: 166px;
   }
 
   .trainer-stage {
-    right: -69px;
+    right: -3px;
+    width: 175px;
+    height: 275px;
   }
 
   .trainer-speech {
-    width: 180px;
+    width: 52%;
     grid-template-columns: 45px 1fr;
   }
 
@@ -1863,7 +1871,7 @@ dialog::backdrop {
   }
 
   .today-achievement {
-    width: 145px;
+    width: 40%;
   }
 
   .set-button {
