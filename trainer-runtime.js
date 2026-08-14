@@ -1,20 +1,127 @@
 (function(){
   const Trainers=window.MuscleMasterTrainers||{};
-  function saved(){try{return JSON.parse(localStorage.getItem('muscleMasterStateV2')||'{}')}catch{return {}}}
-  function trainer(){const s=saved();return Trainers[s.trainerId||'rio']||Trainers.rio}
-  function expression(){let n=document.querySelector('#trainerExpression');if(n)return n;const old=document.querySelector('.speech-avatar');if(!old)return null;n=document.createElement('img');n.id='trainerExpression';n.className='speech-avatar trainer-expression';old.replaceWith(n);return n}
-  function levelArt(){let n=document.querySelector('#levelUpTrainerArt');if(n)return n;const card=document.querySelector('.levelup-card');if(!card)return null;n=document.createElement('img');n.id='levelUpTrainerArt';n.className='levelup-trainer-art';n.alt='レベルアップを祝うリオ';card.insertBefore(n,card.querySelector('#levelUpNumber').nextSibling);return n}
-  function value(id){return Number.parseInt(document.querySelector(id)?.textContent||'0',10)||0}
-  function stateKey(){const p=value('#progressText'),plan=document.querySelector('#planName')?.textContent||'';if(plan==='回復日'&&!p)return'rest';if(!p)return'normal';if(p<30)return'smile';if(p<60)return'cheer';if(p<90)return'praise';if(p<100)return'cheer';return'achieved'}
-  function ensureHud(current){
-    const hero=document.querySelector('#view-home .hero-card');
-    if(hero&&!document.querySelector('#goldenPlayerCard')){const s=saved(),c=document.createElement('div');c.id='goldenPlayerCard';c.className='golden-player-card';c.innerHTML=`<img id="goldenPlayerAvatar" alt="トレーナー"><div><small>PLAYER</small><strong id="goldenPlayerName"></strong><span class="golden-title">努力のルーキー</span></div><div class="golden-player-level"><b id="goldenLevel"></b><span class="golden-xp-rail"><i id="goldenXpBar"></i></span></div>`;hero.appendChild(c);document.querySelector('#goldenPlayerAvatar').src=current.assets.portrait;document.querySelector('#goldenPlayerName').textContent=s.userName||'タナカ'}
-    const metrics=document.querySelector('#view-home .metrics-grid');
-    if(metrics&&!document.querySelector('#goldenHomeStats')){const b=document.createElement('section');b.id='goldenHomeStats';b.className='golden-home-stats game-panel';b.innerHTML='<div class="golden-stats-title"><span>BODY STATUS</span><b>身体能力</b></div>'+[['strength','STR','筋力'],['core','CORE','体幹'],['mobility','MOB','柔軟'],['endurance','END','持久力']].map(x=>`<div class="golden-stat-row" data-stat="${x[0]}"><span class="golden-stat-label"><i>${x[1]}</i>${x[2]}</span><span class="golden-stat-track"><i></i></span><b class="golden-stat-value">0</b></div>`).join('');metrics.after(b)}
-    const nav=document.querySelector('.bottom-nav');if(nav&&!document.querySelector('#goldenSettingsNav')){const b=document.createElement('button');b.id='goldenSettingsNav';b.className='nav-item';b.type='button';b.innerHTML='<span>⚙</span><b>設定</b>';b.onclick=()=>document.querySelector('#settingsButton')?.click();nav.appendChild(b)}
+
+  function saved(){
+    try{return JSON.parse(localStorage.getItem('muscleMasterStateV2')||'{}')||{};}
+    catch{return {};}
   }
-  function sync(current){ensureHud(current);const lv=document.querySelector('#goldenLevel');if(lv)lv.textContent=document.querySelector('#levelText')?.textContent||'LV. 1';const xp=value('#xpText');const xb=document.querySelector('#goldenXpBar');if(xb)xb.style.width=`${xp%100}%`;const s=saved(),pn=document.querySelector('#goldenPlayerName');if(pn)pn.textContent=s.userName||'タナカ';[['strength','#strengthValue'],['core','#coreValue'],['mobility','#mobilityValue'],['endurance','#enduranceValue']].forEach(([k,id])=>{const v=value(id),r=document.querySelector(`#goldenHomeStats [data-stat="${k}"]`);if(r){r.querySelector('.golden-stat-track i').style.width=`${v}%`;r.querySelector('.golden-stat-value').textContent=v}})}
-  function apply(){const c=trainer();if(!c)return;const h=document.querySelector('#trainerArt');if(h){h.src=c.assets.hero;h.alt=`応援トレーナーの${c.displayName}`};const e=expression();if(e){const k=stateKey();e.src=c.states[k]||c.assets.portrait;e.dataset.trainerState=k;e.alt=`${c.displayName}の${k}状態`};const l=levelArt();if(l)l.src=c.states.levelUp||c.assets.levelUp;sync(c)}
-  function observe(){['#progressText','#planName','#levelText','#xpText','#totalSetsText','#strengthValue','#coreValue','#mobilityValue','#enduranceValue'].forEach(s=>{const n=document.querySelector(s);if(n)new MutationObserver(apply).observe(n,{childList:true,subtree:true,characterData:true})});window.addEventListener('storage',apply)}
-  apply();observe();
+
+  function trainer(){
+    const state=saved();
+    return Trainers[state.trainerId||'rio']||Trainers.rio;
+  }
+
+  function numberFrom(selector){
+    const value=Number.parseInt(document.querySelector(selector)?.textContent||'0',10);
+    return Number.isFinite(value)?value:0;
+  }
+
+  function currentStateKey(){
+    const progress=numberFrom('#progressText');
+    const plan=document.querySelector('#planName')?.textContent||'';
+    if(plan==='回復日'&&progress===0)return 'rest';
+    if(progress===0)return 'normal';
+    if(progress<30)return 'smile';
+    if(progress<60)return 'cheer';
+    if(progress<90)return 'praise';
+    if(progress<100)return 'cheer';
+    return 'achieved';
+  }
+
+  function titleFor(totalSets){
+    if(totalSets>=100)return '鋼の継続者';
+    if(totalSets>=50)return '鉄の意志';
+    if(totalSets>=10)return '努力のルーキー';
+    if(totalSets>=1)return '最初の一歩';
+    return '見習いトレーニー';
+  }
+
+  function syncProgress(){
+    const buttons=[...document.querySelectorAll('#exerciseList .set-button')];
+    const completed=buttons.filter(button=>button.classList.contains('done')).length;
+    const total=buttons.length;
+    const percent=numberFrom('#progressText');
+    const doneNode=document.querySelector('#goldenProgressDone');
+    const totalNode=document.querySelector('#goldenProgressTotal');
+    const bar=document.querySelector('#goldenProgressBar');
+    if(doneNode)doneNode.textContent=completed;
+    if(totalNode)totalNode.textContent=total;
+    if(bar)bar.style.width=`${Math.max(0,Math.min(100,percent))}%`;
+  }
+
+  function syncStats(){
+    const sources={
+      strength:'#strengthValue',
+      core:'#coreValue',
+      mobility:'#mobilityValue',
+      endurance:'#enduranceValue'
+    };
+    Object.entries(sources).forEach(([key,selector])=>{
+      const value=numberFrom(selector);
+      const row=document.querySelector(`#goldenHomeStats [data-stat="${key}"]`);
+      if(!row)return;
+      const bar=row.querySelector('.stat-meter i');
+      const level=row.querySelector('.stat-level');
+      if(bar)bar.style.width=`${Math.max(0,Math.min(100,value))}%`;
+      if(level)level.textContent=`Lv.${Math.max(1,Math.ceil(value/10))}`;
+    });
+  }
+
+  function syncProfile(current){
+    const state=saved();
+    const name=document.querySelector('#goldenPlayerName');
+    const title=document.querySelector('#goldenPlayerTitle');
+    const avatar=document.querySelector('#goldenPlayerAvatar');
+    const xpBar=document.querySelector('#goldenXpBar');
+    const xp=numberFrom('#xpText');
+    if(name)name.textContent=state.userName||'タナカ';
+    if(title)title.textContent=titleFor(Number(state.totalSets||0));
+    if(avatar){avatar.src=current.assets.portrait;avatar.alt=current.displayName;}
+    if(xpBar)xpBar.style.width=`${Math.max(0,Math.min(100,xp%100))}%`;
+  }
+
+  function bindSettingsNav(){
+    const button=document.querySelector('#goldenSettingsNav');
+    if(!button||button.dataset.bound)return;
+    button.dataset.bound='1';
+    button.addEventListener('click',()=>document.querySelector('#settingsButton')?.click());
+  }
+
+  function apply(){
+    const current=trainer();
+    if(!current)return;
+
+    const hero=document.querySelector('#trainerArt');
+    if(hero){hero.src=current.assets.hero;hero.alt=`応援トレーナーの${current.displayName}`;}
+
+    const expression=document.querySelector('#trainerExpression');
+    if(expression){
+      const stateKey=currentStateKey();
+      expression.src=current.states[stateKey]||current.assets.portrait;
+      expression.dataset.trainerState=stateKey;
+      expression.alt=`${current.displayName}の${stateKey}状態`;
+    }
+
+    const levelUp=document.querySelector('#levelUpTrainerArt');
+    if(levelUp)levelUp.src=current.states.levelUp||current.assets.levelUp;
+
+    syncProfile(current);
+    syncProgress();
+    syncStats();
+    bindSettingsNav();
+  }
+
+  function observe(){
+    ['#progressText','#planName','#levelText','#xpText','#totalSetsText','#heroTitle','#strengthValue','#coreValue','#mobilityValue','#enduranceValue'].forEach(selector=>{
+      const target=document.querySelector(selector);
+      if(target)new MutationObserver(apply).observe(target,{childList:true,subtree:true,characterData:true});
+    });
+    const exerciseList=document.querySelector('#exerciseList');
+    if(exerciseList)new MutationObserver(syncProgress).observe(exerciseList,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
+    window.addEventListener('storage',apply);
+    document.querySelector('#settingsForm')?.addEventListener('submit',()=>setTimeout(apply,0));
+  }
+
+  apply();
+  observe();
 })();
