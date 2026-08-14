@@ -29,3 +29,15 @@ test('a missed full day ends the streak',()=>{
   };
   assert.equal(Core.computeStreak(days,new Date(2026,7,13,8)),1);
 });
+
+test('execution clock formats countdown and elapsed time safely',()=>{
+  assert.equal(Core.formatClock(0),'00:00');
+  assert.equal(Core.formatClock(65),'01:05');
+  assert.equal(Core.formatClock(-20),'00:00');
+});
+
+test('execution selects the preferred or next incomplete set',()=>{
+  assert.equal(Core.nextIncompleteSet([false,false,false],0),0);
+  assert.equal(Core.nextIncompleteSet([true,false,false],0),1);
+  assert.equal(Core.nextIncompleteSet([true,true,true],1),-1);
+});

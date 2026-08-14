@@ -1403,6 +1403,32 @@ svg {
   letter-spacing: 0.14em;
 }
 
+.exercise-start-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 66px;
+  height: 31px;
+  padding: 0 8px;
+  color: #fff;
+  background: linear-gradient(#39414c, #1d2229);
+  border: 1px solid #090b0e;
+  border-radius: 7px;
+  box-shadow: inset 0 1px #ffffff35, 0 2px 0 #080a0d;
+  font-size: 0.52rem;
+}
+
+.exercise-start-button svg {
+  width: 12px;
+  height: 12px;
+  fill: currentColor;
+}
+
+.exercise-start-button:active {
+  transform: translateY(2px);
+  box-shadow: inset 0 1px #ffffff20;
+}
+
 .set-button {
   width: 32px;
   height: 31px;
@@ -1450,6 +1476,463 @@ svg {
   color: var(--muted);
   font-size: 0.55rem;
   line-height: 1.5;
+}
+
+.workout-mode .game-topbar,
+.workout-mode .bottom-nav {
+  display: none;
+}
+
+.workout-mode .app-shell {
+  padding-bottom: calc(20px + env(safe-area-inset-bottom));
+}
+
+.workout-view {
+  padding-bottom: 12px;
+}
+
+.workout-header {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  gap: 9px;
+  align-items: center;
+  min-height: 75px;
+  margin: 0 -7px 11px;
+  padding: 10px 11px;
+  color: #fff;
+  background:
+    linear-gradient(110deg, #4e171b 0 6px, transparent 6px),
+    linear-gradient(#343b46, #191e25);
+  border-bottom: 3px solid var(--gold);
+  box-shadow: 0 3px 0 #12151a, inset 0 -1px #ffffff26;
+}
+
+.workout-header p,
+.workout-header h1 {
+  margin: 0;
+}
+
+.workout-header p {
+  color: var(--gold-hi);
+  font-size: 0.42rem;
+  font-weight: 1000;
+  letter-spacing: 0.14em;
+}
+
+.workout-header h1 {
+  margin-top: 2px;
+  overflow-wrap: anywhere;
+  font-family: var(--font-display);
+  font-size: 1.08rem;
+  line-height: 1.2;
+}
+
+.workout-back-button {
+  display: grid;
+  place-items: center;
+  width: 33px;
+  height: 33px;
+  padding: 0;
+  color: #fff;
+  background: linear-gradient(#4a525f, #252b33);
+  border: 1px solid #87909d;
+  border-radius: 7px;
+  box-shadow: inset 0 1px #fff4, 0 2px 0 #090b0e;
+}
+
+.workout-back-button svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.workout-category {
+  display: grid;
+  place-items: center;
+  min-width: 43px;
+  height: 25px;
+  padding: 0 7px;
+  color: #fff;
+  background: linear-gradient(#e34550, #9f151e);
+  border: 1px solid #6e0f16;
+  border-radius: 99px;
+  box-shadow: inset 0 1px #ff9da2;
+  font-size: 0.45rem;
+  font-weight: 1000;
+  letter-spacing: 0.08em;
+}
+
+.workout-guide {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  gap: 11px;
+  align-items: center;
+  overflow: hidden;
+  padding: 10px;
+}
+
+.workout-trainer-frame {
+  display: grid;
+  align-content: start;
+  overflow: hidden;
+  background: #292e37;
+  border: 1px solid #11141a;
+  border-radius: 8px;
+  box-shadow: inset 0 1px #ffffff26;
+}
+
+.workout-trainer-frame img {
+  width: 100%;
+  height: 103px;
+  object-fit: cover;
+  object-position: 50% 20%;
+  background: linear-gradient(#f4d7c0, #e9b998);
+  border-bottom: 1px solid #11141a;
+}
+
+.workout-trainer-frame img.trainer-cheer {
+  animation: workout-trainer-cheer 620ms cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+
+@keyframes workout-trainer-cheer {
+  45% {
+    transform: translateY(-4px) scale(1.04);
+    filter: brightness(1.12);
+  }
+}
+
+.workout-trainer-frame > div {
+  padding: 5px 7px 7px;
+  color: #fff;
+}
+
+.workout-trainer-frame small,
+.workout-trainer-frame b {
+  display: block;
+}
+
+.workout-trainer-frame small {
+  color: var(--gold-hi);
+  font-size: 0.38rem;
+  letter-spacing: 0.12em;
+}
+
+.workout-trainer-frame b {
+  margin-top: 1px;
+  overflow-wrap: anywhere;
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  line-height: 1.25;
+}
+
+.workout-guide-copy p,
+.workout-guide-copy strong,
+.workout-guide-copy span {
+  display: block;
+  margin: 0;
+}
+
+.workout-guide-copy p {
+  color: var(--red);
+  font-size: 0.48rem;
+  font-weight: 1000;
+}
+
+.workout-guide-copy strong {
+  margin-top: 3px;
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+  line-height: 1.35;
+}
+
+.workout-guide-copy span {
+  margin-top: 8px;
+  padding-top: 7px;
+  color: var(--muted);
+  border-top: 1px solid #c8ab82;
+  font-size: 0.57rem;
+  line-height: 1.55;
+}
+
+.workout-console {
+  margin-top: 11px;
+  padding: 11px 12px 13px;
+  text-align: center;
+}
+
+.workout-set-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  text-align: left;
+}
+
+.workout-set-header small,
+.workout-set-header strong {
+  display: block;
+}
+
+.workout-set-header small {
+  color: var(--red);
+  font-size: 0.42rem;
+  letter-spacing: 0.12em;
+}
+
+.workout-set-header strong {
+  margin-top: 1px;
+  font-family: var(--font-display);
+  font-size: 0.86rem;
+}
+
+.workout-set-dots {
+  display: flex;
+  gap: 5px;
+}
+
+.workout-set-dots span {
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  color: #6a5848;
+  background: #e4d6c1;
+  border: 1px solid #a28b6d;
+  border-radius: 50%;
+  font-size: 0.5rem;
+}
+
+.workout-set-dots span.current {
+  color: #fff;
+  background: linear-gradient(#4d5662, #252b33);
+  border-color: #0c0f13;
+  box-shadow: 0 0 0 2px var(--gold);
+}
+
+.workout-set-dots span.done {
+  color: #fff;
+  background: linear-gradient(#e44852, #a4151f);
+  border-color: #720e16;
+}
+
+.workout-timer-ring {
+  --timer-progress: 0%;
+  position: relative;
+  width: 158px;
+  height: 158px;
+  display: grid;
+  place-items: center;
+  margin: 13px auto 8px;
+  background: conic-gradient(var(--red) var(--timer-progress), #d8c9b3 0);
+  border: 1px solid #89745a;
+  border-radius: 50%;
+  box-shadow: 0 5px 0 #8e6b40, inset 0 0 0 3px #fff9;
+}
+
+.workout-timer-ring.is-reps {
+  background: conic-gradient(var(--gold) 0 100%);
+}
+
+.workout-timer-ring.is-running {
+  box-shadow: 0 5px 0 #8e6b40, inset 0 0 0 3px #fff9, 0 0 24px #e9a52988;
+}
+
+.workout-timer-ring::before {
+  content: "";
+  position: absolute;
+  inset: 13px;
+  background: radial-gradient(circle at 50% 38%, #fffdf8, #f2dfc2);
+  border: 1px solid #a58b67;
+  border-radius: 50%;
+  box-shadow: inset 0 3px 9px #0002;
+}
+
+.workout-timer-ring > div {
+  position: relative;
+  z-index: 1;
+}
+
+.workout-timer-ring span,
+.workout-timer-ring strong,
+.workout-timer-ring small {
+  display: block;
+}
+
+.workout-timer-ring span {
+  color: var(--red);
+  font-size: 0.42rem;
+  font-weight: 1000;
+  letter-spacing: 0.14em;
+}
+
+.workout-timer-ring strong {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  line-height: 1.1;
+}
+
+.workout-timer-ring small {
+  color: var(--muted);
+  font-size: 0.42rem;
+  letter-spacing: 0.14em;
+}
+
+.workout-timer-status {
+  min-height: 31px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.56rem;
+  line-height: 1.5;
+}
+
+.workout-timer-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 106px;
+  gap: 7px;
+  margin-top: 7px;
+}
+
+.workout-timer-controls button {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 8px;
+  font-size: 0.62rem;
+}
+
+.workout-timer-controls svg {
+  width: 15px;
+  height: 15px;
+}
+
+.workout-timer-toggle {
+  color: #fff;
+  background: linear-gradient(#e34953, #a3151f);
+  border: 1px solid #710f17;
+  box-shadow: inset 0 1px #ff9da2, 0 3px 0 #6b0c13;
+}
+
+.workout-timer-toggle svg {
+  fill: currentColor;
+}
+
+.workout-timer-reset {
+  color: #403830;
+  background: linear-gradient(#fff, #e6d4b8);
+  border: 1px solid #987e5e;
+  box-shadow: 0 3px 0 #8f6b3f;
+}
+
+.workout-timer-reset svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.workout-timer-controls button:disabled {
+  opacity: 0.5;
+  box-shadow: none;
+}
+
+.workout-form-tip {
+  margin-top: 11px;
+  padding: 10px 11px;
+  border-left: 4px solid var(--blue);
+}
+
+.workout-form-tip > div {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--blue);
+  font-size: 0.44rem;
+  font-weight: 1000;
+  letter-spacing: 0.12em;
+}
+
+.workout-form-tip svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.workout-form-tip p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 0.58rem;
+  line-height: 1.55;
+}
+
+.workout-complete-button {
+  width: 100%;
+  min-height: 52px;
+  display: grid;
+  grid-template-columns: 22px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 8px 12px;
+  color: #fff;
+  background: linear-gradient(#e94c56, #a3151f);
+  border: 1px solid #720e16;
+  border-radius: 9px;
+  box-shadow: inset 0 1px #ffadb1, 0 4px 0 #680b12;
+}
+
+.workout-complete-button svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.workout-complete-button span {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+}
+
+.workout-complete-button b {
+  color: var(--gold-hi);
+  font-size: 0.53rem;
+}
+
+.workout-complete-button:disabled {
+  color: #fff;
+  background: linear-gradient(#54753b, #2f5424);
+  border-color: #29481f;
+  box-shadow: inset 0 1px #b7d39e, 0 4px 0 #203819;
+}
+
+.workout-return-button {
+  width: 100%;
+  min-height: 42px;
+  margin-top: 9px;
+  color: #352f29;
+  background: linear-gradient(#fff, #e7d5b9);
+  border: 1px solid #9c8261;
+  border-radius: 8px;
+  box-shadow: 0 3px 0 #8d693d;
+  font-size: 0.62rem;
+}
+
+.workout-return-button[hidden] {
+  display: none;
 }
 
 @keyframes set-stamp {
@@ -2201,6 +2684,33 @@ dialog::backdrop {
 
   .set-button {
     width: 33px;
+  }
+
+  .set-buttons-label {
+    display: none;
+  }
+
+  .exercise-start-button {
+    margin-right: auto;
+  }
+
+  .workout-guide {
+    grid-template-columns: 92px minmax(0, 1fr);
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .workout-trainer-frame img {
+    height: 90px;
+  }
+
+  .workout-timer-ring {
+    width: 146px;
+    height: 146px;
+  }
+
+  .workout-timer-controls {
+    grid-template-columns: minmax(0, 1fr) 94px;
   }
 }
 

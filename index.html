@@ -32,6 +32,11 @@
     <symbol id="icon-core" viewBox="0 0 24 24"><path d="M8 3c1.2 1 2.5 1.5 4 1.5S14.8 4 16 3l2 4-2 14H8L6 7l2-4Z"/><path d="M9 9h6M9 13h6M10 17h4"/></symbol>
     <symbol id="icon-mobility" viewBox="0 0 24 24"><circle cx="12" cy="4" r="2"/><path d="m12 7-3 5-5 3m8-8 3 5 5 2m-8-2-3 8m3-8 4 8"/></symbol>
     <symbol id="icon-endurance" viewBox="0 0 24 24"><path d="M13 2 5 14h6l-1 8 9-13h-6V2Z"/></symbol>
+    <symbol id="icon-back" viewBox="0 0 24 24"><path d="m14.5 5-7 7 7 7M8 12h12"/></symbol>
+    <symbol id="icon-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7V5Z"/></symbol>
+    <symbol id="icon-pause" viewBox="0 0 24 24"><path d="M7 5h4v14H7zM14 5h4v14h-4z"/></symbol>
+    <symbol id="icon-reset" viewBox="0 0 24 24"><path d="M5 8V3m0 5h5M5.8 7.1A8 8 0 1 1 4 15"/></symbol>
+    <symbol id="icon-check" viewBox="0 0 24 24"><path d="m5 12 4.5 4.5L19 7"/></symbol>
   </svg>
   <div class="app-viewport">
     <div class="phone-frame">
@@ -152,6 +157,52 @@
           <p class="safety-note">痛み・しびれ・めまいなどが出た場合は中止してください。休養日も育成の一部です。</p>
         </section>
 
+        <section id="view-workout" class="view workout-view" data-view="workout" aria-labelledby="workoutExerciseName">
+          <header class="workout-header">
+            <button id="workoutBackButton" class="workout-back-button" type="button" aria-label="トレーニング選択へ戻る"><svg><use href="#icon-back"></use></svg></button>
+            <div><p>TRAINING EXECUTION</p><h1 id="workoutExerciseName">スクワット</h1></div>
+            <span id="workoutCategory" class="workout-category">STR</span>
+          </header>
+
+          <section class="workout-guide game-panel">
+            <div class="workout-trainer-frame">
+              <img id="workoutTrainerImage" src="./assets/trainers/rio/portrait.webp" alt="トレーナーのリオ" />
+              <div><small>TRAINER</small><b id="workoutTrainerName">リオ</b></div>
+            </div>
+            <div class="workout-guide-copy">
+              <p id="workoutKind">脚・お尻</p>
+              <strong id="workoutTarget">10〜15回 × 3セット</strong>
+              <span id="workoutAdvice">胸を起こし、膝とつま先の向きを揃えましょう。</span>
+            </div>
+          </section>
+
+          <section class="workout-console game-panel" aria-label="セット実行">
+            <div class="workout-set-header">
+              <div><small>CURRENT SET</small><strong>SET <span id="workoutCurrentSet">1</span> / <span id="workoutTotalSets">3</span></strong></div>
+              <div id="workoutSetDots" class="workout-set-dots" aria-label="セット完了状況"></div>
+            </div>
+
+            <div id="workoutTimerRing" class="workout-timer-ring" style="--timer-progress: 0%">
+              <div><span id="workoutTimerMode">TARGET</span><strong id="workoutTimerValue">12</strong><small id="workoutTimerUnit">REPS</small></div>
+            </div>
+            <p id="workoutTimerStatus" class="workout-timer-status" aria-live="polite">フォームを確認して開始してください。</p>
+
+            <div class="workout-timer-controls">
+              <button id="workoutTimerToggle" class="workout-timer-toggle" type="button"><svg><use href="#icon-play"></use></svg><span>開始</span></button>
+              <button id="workoutTimerReset" class="workout-timer-reset" type="button"><svg><use href="#icon-reset"></use></svg><span>リセット</span></button>
+            </div>
+          </section>
+
+          <section class="workout-form-tip game-panel">
+            <div><svg aria-hidden="true"><use href="#icon-check"></use></svg><span>FORM CHECK</span></div>
+            <p id="workoutFormTip">反動を使わず、呼吸を止めない範囲で行いましょう。</p>
+          </section>
+
+          <button id="workoutCompleteButton" class="workout-complete-button" type="button"><svg><use href="#icon-check"></use></svg><span>このセットを完了</span><b>+10 XP</b></button>
+          <button id="workoutReturnButton" class="workout-return-button" type="button" hidden>メニューへ戻る</button>
+          <p class="safety-note">痛み・しびれ・めまいが出た場合は、タイマーを一時停止して中止してください。</p>
+        </section>
+
         <section id="view-status" class="view" data-view="status">
           <section class="page-heading"><div><p class="kicker">PLAYER STATUS</p><h1>身体育成ステータス</h1><p>完了したセットが4つの能力値として蓄積されます。</p></div></section>
           <section class="profile-card game-panel"><div class="profile-level"><small>PLAYER LEVEL</small><strong id="profileLevel">01</strong></div><div><p class="mini-label">NEXT LEVEL</p><div class="level-rail"><span id="levelBar"></span></div><p id="levelCaption" class="muted">あと100 XP</p></div></section>
@@ -218,7 +269,10 @@
         <p class="exercise-target"></p>
         <p class="exercise-progress"></p>
       </div>
-      <div class="set-buttons"><span class="set-buttons-label">SET</span></div>
+      <div class="set-buttons">
+        <button class="exercise-start-button" type="button"><svg><use href="#icon-play"></use></svg><span>開始</span></button>
+        <span class="set-buttons-label">QUICK SET</span>
+      </div>
     </article>
   </template>
 

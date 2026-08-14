@@ -40,7 +40,7 @@ test('golden screen uses one runtime stylesheet and vector UI icons',()=>{
   assert.equal((css.match(/{/g)||[]).length,(css.match(/}/g)||[]).length,'CSS braces must be balanced');
 
   const sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');
-  assert.match(sw,/muscle-master-v12/);
+  assert.match(sw,/muscle-master-v13/);
   assert.doesNotMatch(sw,/\.\/style\.css|\.\/v3\.css|\.\/trainer-runtime\.css/);
 });
 
@@ -62,6 +62,32 @@ test('training selection exposes readable filters and set status',()=>{
   assert.match(app,/questFilter='all'/);
   assert.match(app,/aria-pressed/);
   assert.match(css,/@media \(max-width: 350px\)/);
+});
+
+test('training execution provides set flow, pause and timer controls',()=>{
+  const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
+  const app=fs.readFileSync(path.join(root,'app.js'),'utf8');
+  const css=fs.readFileSync(path.join(root,'design-match.css'),'utf8');
+
+  for(const id of ['view-workout','workoutTimerToggle','workoutTimerReset','workoutCompleteButton','workoutReturnButton']){
+    assert.match(html,new RegExp(`id="${id}"`));
+  }
+  assert.match(html,/data-view="workout"/);
+  assert.match(html,/class="exercise-start-button"/);
+  assert.match(app,/execution:\{mode:'timer',value:30/);
+  assert.match(app,/function toggleWorkoutClock\(\)/);
+  assert.match(app,/function completeWorkoutSet\(\)/);
+  assert.match(app,/Core\.nextIncompleteSet/);
+  assert.match(css,/\.workout-trainer-frame\s*\{[^}]*overflow:\s*hidden/s);
+  assert.match(css,/\.workout-trainer-frame b\s*\{[^}]*overflow-wrap:\s*anywhere/s);
+  assert.match(css,/\.workout-mode \.bottom-nav/);
+});
+
+test('home progress remains based on the full daily plan while filters are active',()=>{
+  const runtime=fs.readFileSync(path.join(root,'trainer-runtime.js'),'utf8');
+  assert.match(runtime,/numberFrom\('#questProgressDone'\)/);
+  assert.match(runtime,/numberFrom\('#questProgressTotal'\)/);
+  assert.doesNotMatch(runtime,/exerciseList \.set-button/);
 });
 
 test('home trainer is clipped to the hero and status stays isolated',()=>{

@@ -33,6 +33,18 @@
   function levelForTotalSets(totalSets){return Math.floor(xpForTotalSets(totalSets)/100)+1;}
   function levelProgressForTotalSets(totalSets){return xpForTotalSets(totalSets)%100;}
   function trainerDisplayName(name){return String(name||'').trim()||DEFAULT_TRAINER_NAME;}
+  function formatClock(totalSeconds){
+    const safe=Math.max(0,Math.floor(Number(totalSeconds)||0));
+    return `${String(Math.floor(safe/60)).padStart(2,'0')}:${String(safe%60).padStart(2,'0')}`;
+  }
+  function nextIncompleteSet(sets=[],preferredIndex=0){
+    if(!Array.isArray(sets)||!sets.length)return -1;
+    const safeIndex=Math.max(0,Math.min(sets.length-1,Math.floor(Number(preferredIndex)||0)));
+    if(!sets[safeIndex])return safeIndex;
+    const after=sets.findIndex((done,index)=>index>safeIndex&&!done);
+    if(after!==-1)return after;
+    return sets.findIndex(done=>!done);
+  }
 
-  return {DEFAULT_TRAINER_NAME,todayKey,hasActivity,computeStreak,xpForTotalSets,levelForTotalSets,levelProgressForTotalSets,trainerDisplayName};
+  return {DEFAULT_TRAINER_NAME,todayKey,hasActivity,computeStreak,xpForTotalSets,levelForTotalSets,levelProgressForTotalSets,trainerDisplayName,formatClock,nextIncompleteSet};
 });
