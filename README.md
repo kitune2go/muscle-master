@@ -55,6 +55,7 @@
 - `manifest.json` — PWA設定
 - `sw.js` — オフラインキャッシュ
 - `docs/MASTER_SPEC_UPDATE_2026-08-15.md` — 現行MASTER_SPECの実装状況・優先順位更新
+- `docs/QUEST_ARCHITECTURE.md` — クエストの追加方式、報酬、演出の拡張方針
 - `docs/UI_TRAINING_SELECTION_QA.md` — トレーニング選択画面の確認基準
 
 ## GitHub Pages
