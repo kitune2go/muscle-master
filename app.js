@@ -1,7 +1,9 @@
 const STORAGE_KEY='muscleMasterStateV2';
 const LEGACY_KEY='muscleMasterStateV1';
 const Core=window.MuscleMasterCore;
+const QuestCore=window.MuscleMasterQuestCore;
 const QUEST_XP_PER_SET=10;
+const QUEST_PACK_URL='./data/quests/core.json';
 
 const exerciseCatalog={
   squat:{id:'squat',kind:'脚・お尻',name:'スクワット',target:'10〜15回 × 3セット',sets:3,primaryCategory:'strength',categories:['strength','endurance'],stats:{strength:3,endurance:1},execution:{mode:'reps',value:12,advice:'胸を起こし、膝とつま先の向きを揃えましょう。',formTip:'椅子へ腰掛けるようにお尻を引き、呼吸を止めない範囲で行います。'}},
@@ -30,7 +32,7 @@ const weeklyPlans={
   6:{code:'SAT',name:'選択チャレンジ',note:'余裕があれば軽く挑戦',ids:['squat','pushup','plank','mobility']}
 };
 
-const defaultState={userName:'',trainerId:'rio',trainerName:'リオ',days:{},totalSets:0,stats:{strength:0,core:0,mobility:0,endurance:0},sound:true,lastShownLevel:1};
+const defaultState={userName:'',trainerId:'rio',trainerName:'リオ',days:{},totalSets:0,stats:{strength:0,core:0,mobility:0,endurance:0},sound:true,lastShownLevel:1,quests:QuestCore.normalizeQuestState()};
 function cloneDefault(){return JSON.parse(JSON.stringify(defaultState));}
 function todayKey(date=new Date()){return Core.todayKey(date);}
 function dateFromKey(key){return new Date(`${key}T00:00:00`);}
@@ -50,11 +52,31 @@ function loadState(){
 }
 let state=loadState();
 let questFilter='all';
+let questPack=null;
 let activeWorkoutId=null;
 let workoutSetIndex=0;
 const workoutClock={running:false,elapsed:0,remaining:0,intervalId:null};
-state.stats={...defaultState.stats,...(state.stats||{})};state.days||={};
+state.stats={...defaultState.stats,...(state.stats||{})};state.days||={};state.quests=QuestCore.normalizeQuestState(state.quests);
 function saveState(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
+
+function evaluateQuests(){
+  if(!questPack)return[];
+  const now=new Date();
+  const evaluation=QuestCore.evaluateQuestPack(questPack,state,{now,exerciseCatalog});
+  const merged=QuestCore.mergeQuestEvaluation(state.quests,evaluation,now);
+  state.quests=merged.state;
+  saveState();
+  return merged.newlyCompleted;
+}
+function emitTrainingEvent(name,detail){window.dispatchEvent(new CustomEvent(name,{detail}));}
+async function loadQuestPack(){
+  try{
+    const response=await fetch(QUEST_PACK_URL);
+    if(!response.ok)throw new Error(`Quest pack request failed: ${response.status}`);
+    questPack=QuestCore.validateQuestPack(await response.json());
+    evaluateQuests();
+  }catch(error){console.warn('Quest pack is unavailable; training records remain active.',error);}
+}
 
 function ensureDay(key=todayKey()){
   state.days[key]||={};
@@ -266,7 +288,7 @@ function closeWorkout(){stopWorkoutClock();showView('quest');}
 function renderStatus(){const lv=level(),lp=levelProgress();document.querySelector('#profileLevel').textContent=String(lv).padStart(2,'0');setBar('#levelBar',lp);document.querySelector('#levelCaption').textContent=lp===0&&xp()>0?'レベルアップ！ 次の100 XPへ':`次のレベルまで ${100-lp} XP`;[['strength','strengthBar','strengthValue'],['core','coreBar','coreValue'],['mobility','mobilityBar','mobilityValue'],['endurance','enduranceBar','enduranceValue']].forEach(([key,bar,val])=>{setBar(`#${bar}`,state.stats[key]||0);document.querySelector(`#${val}`).textContent=state.stats[key]||0;});const achievements=[{label:'🌱 はじめの1セット',ok:state.totalSets>=1},{label:'💪 10セット突破',ok:state.totalSets>=10},{label:'🔥 3日継続',ok:getStreak()>=3},{label:'⚔ 50セット突破',ok:state.totalSets>=50},{label:'👑 LV.5到達',ok:level()>=5}];document.querySelector('#achievementList').innerHTML=achievements.map(a=>`<span class="achievement${a.ok?'':' locked'}">${a.label}</span>`).join('');}
 function renderHistory(){const entries=Object.keys(state.days).map(key=>({key,done:completedSetsForKey(key),total:requiredSetsForKey(key),plan:planForKey(key).name})).filter(x=>x.done>0).sort((a,b)=>b.key.localeCompare(a.key)).slice(0,14);const root=document.querySelector('#historyList');if(!entries.length){root.innerHTML='<div class="empty-state">まだ記録がありません。<br>最初の1セットを始めましょう。</div>';return;}root.innerHTML=entries.map(e=>`<div class="history-row"><div><strong>${formatDate(e.key)} · ${e.plan}</strong><span>${e.done} / ${e.total} セット完了</span></div><span class="history-badge">${Math.min(100,Math.round(e.done/e.total*100))}%</span></div>`).join('');}
 function render(){renderPlanLabels();renderHome();renderQuest();if(activeWorkout())renderWorkout();renderStatus();renderHistory();const soundButton=document.querySelector('#soundButton'),soundIcon=soundButton.querySelector('use');soundButton.classList.toggle('muted-sound',!state.sound);soundButton.setAttribute('aria-pressed',String(state.sound));soundButton.setAttribute('aria-label',state.sound?'効果音をオフにする':'効果音をオンにする');if(soundIcon)soundIcon.setAttribute('href',state.sound?'#icon-sound':'#icon-sound-off');saveState();bindDynamicLinks();}
-function toggleSet(ex,index){const day=ensureDay(),previousLevel=level(),wasDone=day[ex.id][index];day[ex.id][index]=!wasDone;state.totalSets=Math.max(0,state.totalSets+(wasDone?-1:1));addStats(ex,wasDone?-1:1);saveState();render();if(wasDone){playUndo();showToast('セットを取り消しました','undo');}else{playComplete();pulseTrainer();showToast(`${ex.name} SET ${index+1} 完了！ +10 XP`,'success');checkLevelUp(previousLevel);if(getProgress()===100){confetti();setTimeout(()=>playLevelUp(),120);}}}
+function toggleSet(ex,index){const day=ensureDay(),previousLevel=level(),wasDone=day[ex.id][index];day[ex.id][index]=!wasDone;state.totalSets=Math.max(0,state.totalSets+(wasDone?-1:1));addStats(ex,wasDone?-1:1);saveState();emitTrainingEvent(wasDone?'training:set-reverted':'training:set-completed',{dateKey:todayKey(),exerciseId:ex.id,setIndex:index});render();if(wasDone){playUndo();showToast('セットを取り消しました','undo');}else{playComplete();pulseTrainer();showToast(`${ex.name} SET ${index+1} 完了！ +10 XP`,'success');checkLevelUp(previousLevel);if(getProgress()===100){confetti();setTimeout(()=>playLevelUp(),120);}}}
 function quickComplete(id,index){const ex=exerciseCatalog[id];if(ex)toggleSet(ex,index);}
 function showView(name){if(name==='workout'&&!activeWorkout())name='quest';if(name!=='workout'&&workoutClock.running)stopWorkoutClock();document.body.classList.toggle('workout-mode',name==='workout');document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.dataset.view===name));document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.tabLink===(name==='workout'?'quest':name)));history.replaceState(null,'',`#${name}`);window.scrollTo({top:0,behavior:'smooth'});}
 function bindDynamicLinks(){document.querySelectorAll('[data-tab-link]').forEach(el=>{if(el.dataset.bound)return;el.dataset.bound='1';el.addEventListener('click',e=>{e.preventDefault();showView(el.dataset.tabLink);});});document.querySelectorAll('[data-quick]').forEach(el=>{if(el.dataset.bound)return;el.dataset.bound='1';el.addEventListener('click',()=>quickComplete(el.dataset.quick,Number(el.dataset.index)));});}
@@ -283,8 +305,9 @@ document.querySelector('#workoutReturnButton').addEventListener('click',closeWor
 document.querySelector('#workoutTimerToggle').addEventListener('click',toggleWorkoutClock);
 document.querySelector('#workoutTimerReset').addEventListener('click',()=>resetWorkoutClock());
 document.querySelector('#workoutCompleteButton').addEventListener('click',completeWorkoutSet);
-document.querySelector('#resetTodayButton').addEventListener('click',()=>{if(!confirm('今日のチェックをすべてリセットしますか？'))return;const day=ensureDay();for(const ex of exercisesForDate())(day[ex.id]||[]).forEach((done,i)=>{if(done){state.totalSets=Math.max(0,state.totalSets-1);addStats(ex,-1);}day[ex.id][i]=false;});saveState();render();showToast('今日の記録をリセットしました');});
+['training:set-completed','training:set-reverted','training:day-reset'].forEach(name=>window.addEventListener(name,evaluateQuests));
+document.querySelector('#resetTodayButton').addEventListener('click',()=>{if(!confirm('今日のチェックをすべてリセットしますか？'))return;const day=ensureDay();for(const ex of exercisesForDate())(day[ex.id]||[]).forEach((done,i)=>{if(done){state.totalSets=Math.max(0,state.totalSets-1);addStats(ex,-1);}day[ex.id][i]=false;});saveState();emitTrainingEvent('training:day-reset',{dateKey:todayKey()});render();showToast('今日の記録をリセットしました');});
 window.addEventListener('hashchange',()=>showView(location.hash.replace('#','')||'home'));
 if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 
-ensureDay();if(!state.lastShownLevel)state.lastShownLevel=level();render();showView(['home','quest','status','log'].includes(location.hash.slice(1))?location.hash.slice(1):'home');if(!state.userName)setTimeout(()=>settingsDialog.showModal(),300);
+ensureDay();if(!state.lastShownLevel)state.lastShownLevel=level();render();showView(['home','quest','status','log'].includes(location.hash.slice(1))?location.hash.slice(1):'home');loadQuestPack();if(!state.userName)setTimeout(()=>settingsDialog.showModal(),300);
