@@ -17,93 +17,122 @@
   <title>Muscle Master</title>
 </head>
 <body>
-  <div class="top-noise" aria-hidden="true"></div>
-  <header class="topbar">
-    <a class="brand" href="#home" data-tab-link="home" aria-label="Muscle Master ホーム">
-      <img class="brand-logo" src="./assets/logo.png" alt="マッスルマスター" />
-    </a>
-    <div class="top-actions">
-      <button id="soundButton" class="round-button" aria-label="効果音">♪</button>
-      <button id="settingsButton" class="round-button" aria-label="設定">⚙</button>
+  <div class="app-viewport">
+    <div class="phone-frame">
+      <header class="game-topbar">
+        <span class="game-topbar-mark">MM</span>
+        <span class="game-topbar-title">MUSCLE MASTER</span>
+        <div class="game-topbar-tools">
+          <button id="soundButton" class="screen-tool" aria-label="効果音">♪</button>
+          <button id="settingsButton" class="screen-tool" aria-label="設定">⚙</button>
+        </div>
+      </header>
+
+      <main class="app-shell">
+        <section id="view-home" class="view active" data-view="home">
+          <section class="home-board">
+            <h1 id="heroTitle" class="sr-only">今日の自分を1段階アップデート。</h1>
+
+            <div class="home-hero">
+              <a class="home-logo" href="#home" data-tab-link="home" aria-label="Muscle Master ホーム">
+                <img src="./assets/logo.png" alt="マッスルマスター" />
+              </a>
+
+              <section id="goldenPlayerCard" class="player-card">
+                <img id="goldenPlayerAvatar" src="./assets/trainers/rio/portrait.webp" alt="リオ" />
+                <div class="player-copy">
+                  <small>PLAYER</small>
+                  <strong id="goldenPlayerName">タナカ</strong>
+                  <span id="goldenPlayerTitle">見習いトレーニー</span>
+                </div>
+                <div class="player-level">
+                  <b id="levelText">LV. 1</b>
+                  <span id="xpText">0 XP</span>
+                  <span class="xp-track"><i id="goldenXpBar"></i></span>
+                </div>
+              </section>
+
+              <section class="rank-card">
+                <span class="rank-icon">🏆</span>
+                <div><small>本日のメニュー</small><strong id="planName">全身A</strong><span id="planNote">脚・胸・腹をバランスよく</span></div>
+                <b id="weekdayChip">MON</b>
+              </section>
+
+              <div class="trainer-stage" id="trainerStage">
+                <div class="trainer-aura" aria-hidden="true"></div>
+                <img src="./assets/trainers/rio/hero.webp" alt="応援トレーナーのリオ" class="trainer-art" id="trainerArt" />
+                <div class="trainer-badge"><span>TRAINER</span><b id="trainerName">リオ</b></div>
+              </div>
+
+              <section class="trainer-speech">
+                <img id="trainerExpression" class="speech-avatar trainer-expression" src="./assets/trainers/rio/portrait.webp" alt="リオの表情" />
+                <div class="speech-copy"><small>RIO MESSAGE</small><p id="trainerMessage">今日は1セットから。最初の一歩がいちばん強いわ。</p></div>
+              </section>
+
+              <section class="today-achievement">
+                <small>今日の達成</small>
+                <div class="achievement-count"><strong id="goldenProgressDone">0</strong><span>/</span><b id="goldenProgressTotal">0</b><em>セット</em></div>
+                <div class="achievement-track"><i id="goldenProgressBar"></i></div>
+                <span id="progressText" class="sr-only">0%</span>
+              </section>
+            </div>
+
+            <section class="home-summary">
+              <article><span>継続日数</span><strong><b id="streakText">0</b>日</strong></article>
+              <article><span>累計セット</span><strong id="totalSetsText">0</strong></article>
+            </section>
+
+            <section id="goldenHomeStats" class="home-stats">
+              <div class="home-stats-heading"><strong>身体能力</strong><span>BODY STATUS</span></div>
+              <div class="home-stat-row" data-stat="strength"><span class="stat-badge str">STR</span><b>筋力</b><div class="stat-meter"><i></i></div><strong class="stat-level">Lv.1</strong></div>
+              <div class="home-stat-row" data-stat="core"><span class="stat-badge core">CORE</span><b>体幹</b><div class="stat-meter"><i></i></div><strong class="stat-level">Lv.1</strong></div>
+              <div class="home-stat-row" data-stat="mobility"><span class="stat-badge mob">MOB</span><b>柔軟</b><div class="stat-meter"><i></i></div><strong class="stat-level">Lv.1</strong></div>
+              <div class="home-stat-row" data-stat="endurance"><span class="stat-badge end">END</span><b>持久力</b><div class="stat-meter"><i></i></div><strong class="stat-level">Lv.1</strong></div>
+            </section>
+
+            <button class="home-cta primary-button" data-tab-link="quest"><span>◆</span> 今日のトレーニング <b>→</b></button>
+            <div id="quickQuest" class="sr-only" aria-hidden="true"></div>
+          </section>
+        </section>
+
+        <section id="view-quest" class="view" data-view="quest">
+          <section class="page-heading">
+            <div><p class="kicker">DAILY QUEST</p><h1 id="userHeading">今日のトレーニング</h1><p id="questDescription">無理に全部やらなくてOK。終えたセットだけ記録しましょう。</p></div>
+            <button id="resetTodayButton" class="ghost-button danger">今日をリセット</button>
+          </section>
+          <div class="weekly-banner game-panel"><div><span id="questDayChip" class="day-chip">MON</span></div><div><small>WEEKLY PROGRAM</small><b id="questPlanName">全身A</b><span id="questPlanNote">基本の全身トレーニング</span></div></div>
+          <div class="progress-rail"><span id="progressBar"></span></div>
+          <div id="exerciseList" class="exercise-list"></div>
+          <p class="safety-note">痛み・しびれ・めまいなどが出た場合は中止してください。休養日も育成の一部です。</p>
+        </section>
+
+        <section id="view-status" class="view" data-view="status">
+          <section class="page-heading"><div><p class="kicker">PLAYER STATUS</p><h1>身体育成ステータス</h1><p>完了したセットが4つの能力値として蓄積されます。</p></div></section>
+          <section class="profile-card game-panel"><div class="profile-level"><small>PLAYER LEVEL</small><strong id="profileLevel">01</strong></div><div><p class="mini-label">NEXT LEVEL</p><div class="level-rail"><span id="levelBar"></span></div><p id="levelCaption" class="muted">あと100 XP</p></div></section>
+          <section class="stats-board game-panel">
+            <div class="stat-row"><div><span>STR</span><b>筋力</b></div><div class="stat-track"><i id="strengthBar"></i></div><strong id="strengthValue">0</strong></div>
+            <div class="stat-row"><div><span>CORE</span><b>体幹</b></div><div class="stat-track"><i id="coreBar"></i></div><strong id="coreValue">0</strong></div>
+            <div class="stat-row"><div><span>MOB</span><b>柔軟</b></div><div class="stat-track"><i id="mobilityBar"></i></div><strong id="mobilityValue">0</strong></div>
+            <div class="stat-row"><div><span>END</span><b>持久力</b></div><div class="stat-track"><i id="enduranceBar"></i></div><strong id="enduranceValue">0</strong></div>
+          </section>
+          <section class="game-panel achievement-panel"><p class="mini-label">ACHIEVEMENT</p><h2>称号</h2><div id="achievementList" class="achievement-list"></div></section>
+        </section>
+
+        <section id="view-log" class="view" data-view="log">
+          <section class="page-heading"><div><p class="kicker">TRAINING LOG</p><h1>育成記録</h1><p>最近のトレーニング日を振り返れます。</p></div></section>
+          <section class="game-panel log-panel"><div id="historyList" class="history-list"></div></section>
+        </section>
+      </main>
+
+      <nav class="bottom-nav" aria-label="メインナビゲーション">
+        <button class="nav-item active" data-tab-link="home"><span>⌂</span><b>ホーム</b></button>
+        <button class="nav-item" data-tab-link="quest"><span>⚔</span><b>クエスト</b></button>
+        <button class="nav-item" data-tab-link="status"><span>◇</span><b>ステータス</b></button>
+        <button class="nav-item" data-tab-link="log"><span>▤</span><b>記録</b></button>
+        <button id="goldenSettingsNav" class="nav-item" type="button"><span>⚙</span><b>設定</b></button>
+      </nav>
     </div>
-  </header>
-
-  <main class="app-shell">
-    <section id="view-home" class="view active" data-view="home">
-      <section class="hero-card game-panel">
-        <div class="hero-copy">
-          <span class="chapter-chip">CHAPTER 01 · BODY BUILD</span>
-          <p class="kicker">TODAY'S MISSION</p>
-          <h1 id="heroTitle">今日の自分を<br><em>1段階</em>アップデート。</h1>
-          <p class="hero-lead">回数を競うより、フォームを整えて積み上げる。毎日のセットが、あなたのステータスになります。</p>
-          <div class="plan-strip">
-            <span id="weekdayChip" class="day-chip">MON</span>
-            <div><small>TODAY'S PLAN</small><b id="planName">全身A</b><span id="planNote">基本の全身トレーニング</span></div>
-          </div>
-          <div class="hero-actions">
-            <button class="primary-button" data-tab-link="quest">トレーニング開始 <span>→</span></button>
-            <span class="xp-chip"><b id="levelText">LV. 1</b><small id="xpText">0 XP</small></span>
-          </div>
-        </div>
-        <div class="trainer-stage" id="trainerStage">
-          <div class="trainer-aura" aria-hidden="true"></div>
-          <img src="./assets/trainers/rio/hero.webp" alt="応援トレーナーのリオ" class="trainer-art" id="trainerArt" />
-          <div class="trainer-badge"><span>TRAINER</span><b id="trainerName">トレーナー</b></div>
-        </div>
-      </section>
-
-      <section class="speech-card game-panel">
-        <span class="speech-avatar">♥</span>
-        <div><p class="mini-label">TRAINER MESSAGE</p><p id="trainerMessage">今日は1セットから始めましょう。積み上げが最強よ。</p></div>
-      </section>
-
-      <section class="metrics-grid">
-        <article class="metric-card game-panel"><span class="metric-icon">◎</span><small>TODAY</small><strong id="progressText">0%</strong><span>達成率</span></article>
-        <article class="metric-card game-panel"><span class="metric-icon">🔥</span><small>STREAK</small><strong><span id="streakText">0</span>日</strong><span>継続</span></article>
-        <article class="metric-card game-panel"><span class="metric-icon">◆</span><small>TOTAL</small><strong id="totalSetsText">0</strong><span>累計セット</span></article>
-      </section>
-
-      <section class="game-panel quick-panel">
-        <div class="section-heading"><div><p class="mini-label">QUICK START</p><h2>次のクエスト</h2></div><button class="ghost-button" data-tab-link="quest">すべて見る</button></div>
-        <div id="quickQuest" class="quick-quest"></div>
-      </section>
-    </section>
-
-    <section id="view-quest" class="view" data-view="quest">
-      <section class="page-heading">
-        <div><p class="kicker">DAILY QUEST</p><h1 id="userHeading">今日のトレーニング</h1><p id="questDescription">無理に全部やらなくてOK。終えたセットだけ記録しましょう。</p></div>
-        <button id="resetTodayButton" class="ghost-button danger">今日をリセット</button>
-      </section>
-      <div class="weekly-banner game-panel"><div><span id="questDayChip" class="day-chip">MON</span></div><div><small>WEEKLY PROGRAM</small><b id="questPlanName">全身A</b><span id="questPlanNote">基本の全身トレーニング</span></div></div>
-      <div class="progress-rail"><span id="progressBar"></span></div>
-      <div id="exerciseList" class="exercise-list"></div>
-      <p class="safety-note">痛み・しびれ・めまいなどが出た場合は中止してください。休養日も育成の一部です。</p>
-    </section>
-
-    <section id="view-status" class="view" data-view="status">
-      <section class="page-heading"><div><p class="kicker">PLAYER STATUS</p><h1>身体育成ステータス</h1><p>完了したセットが4つの能力値として蓄積されます。</p></div></section>
-      <section class="profile-card game-panel"><div class="profile-level"><small>PLAYER LEVEL</small><strong id="profileLevel">01</strong></div><div><p class="mini-label">NEXT LEVEL</p><div class="level-rail"><span id="levelBar"></span></div><p id="levelCaption" class="muted">あと100 XP</p></div></section>
-      <section class="stats-board game-panel">
-        <div class="stat-row"><div><span>STR</span><b>筋力</b></div><div class="stat-track"><i id="strengthBar"></i></div><strong id="strengthValue">0</strong></div>
-        <div class="stat-row"><div><span>CORE</span><b>体幹</b></div><div class="stat-track"><i id="coreBar"></i></div><strong id="coreValue">0</strong></div>
-        <div class="stat-row"><div><span>MOB</span><b>柔軟</b></div><div class="stat-track"><i id="mobilityBar"></i></div><strong id="mobilityValue">0</strong></div>
-        <div class="stat-row"><div><span>END</span><b>持久力</b></div><div class="stat-track"><i id="enduranceBar"></i></div><strong id="enduranceValue">0</strong></div>
-      </section>
-      <section class="game-panel achievement-panel"><p class="mini-label">ACHIEVEMENT</p><h2>称号</h2><div id="achievementList" class="achievement-list"></div></section>
-    </section>
-
-    <section id="view-log" class="view" data-view="log">
-      <section class="page-heading"><div><p class="kicker">TRAINING LOG</p><h1>育成記録</h1><p>最近のトレーニング日を振り返れます。</p></div></section>
-      <section class="game-panel log-panel"><div id="historyList" class="history-list"></div></section>
-    </section>
-  </main>
-
-  <nav class="bottom-nav" aria-label="メインナビゲーション">
-    <button class="nav-item active" data-tab-link="home"><span>⌂</span><b>ホーム</b></button>
-    <button class="nav-item" data-tab-link="quest"><span>⚔</span><b>クエスト</b></button>
-    <button class="nav-item" data-tab-link="status"><span>◇</span><b>ステータス</b></button>
-    <button class="nav-item" data-tab-link="log"><span>▤</span><b>記録</b></button>
-  </nav>
+  </div>
 
   <dialog id="settingsDialog" aria-labelledby="settingsTitle">
     <form method="dialog" id="settingsForm" class="settings-form">
@@ -117,7 +146,11 @@
 
   <div id="levelUpOverlay" class="levelup-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="levelUpNumber">
     <div class="levelup-card">
-      <p>LEVEL UP!</p><strong id="levelUpNumber">LV. 2</strong><span id="levelUpMessage">新しいレベルに到達！</span><button id="levelUpClose" class="primary-button">続ける</button>
+      <p>LEVEL UP!</p>
+      <strong id="levelUpNumber">LV. 2</strong>
+      <img id="levelUpTrainerArt" class="levelup-trainer-art" src="./assets/trainers/rio/level-up.webp" alt="レベルアップを祝うリオ" />
+      <span id="levelUpMessage">新しいレベルに到達！</span>
+      <button id="levelUpClose" class="primary-button">続ける</button>
     </div>
   </div>
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
