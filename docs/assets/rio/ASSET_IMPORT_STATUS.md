@@ -46,8 +46,8 @@ Dedicated praise and surprise face variants are deferred to Runtime v1.1. Their 
 Runtime integration is now present through:
 - `trainer-data.js` — stable trainer ID, asset paths, semantic state mapping
 - `trainer-runtime.js` — Home Hero, trainer-message state image and Level Up artwork binding
-- `trainer-runtime.css` — runtime presentation
-- `sw.js` cache v7 — trainer runtime files and the Rio asset pack are available offline
+- `design-match.css` — Home Hero、Level Upを含むruntime presentation
+- `sw.js` cache v9 — trainer runtime files and the Rio asset pack are available offline
 
 The previous root-level `assets/rio-hero.webp` is no longer the Home runtime source on this branch; Home uses `assets/trainers/rio/hero.webp`.
 

@@ -43,8 +43,8 @@
 ## Files
 
 - `index.html` — アプリ画面
-- `style.css` — 基本UI / デザインシステム
-- `v3.css` — ゲーム演出 / 曜日プログラムUI
+- `design-match.css` — UIコンセプトシート準拠の画面構成・デザインシステム・ゲーム演出（実行時に読み込む単一CSS）
+- `style.css` / `v3.css` — 旧UIの履歴ファイル（実行時は未使用）
 - `app.js` — 記録・曜日別メニュー・育成ロジック
 - `app-core.js` — XP・レベル・継続日数などの共通ロジック
 - `assets/trainer.svg` — オリジナルトレーナー素材
