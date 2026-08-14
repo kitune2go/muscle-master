@@ -1,4 +1,4 @@
-const CACHE_NAME='muscle-master-v7';
+const CACHE_NAME='muscle-master-v8';
 const APP_SHELL=[
   './','./index.html','./style.css','./v3.css','./design-match.css','./trainer-runtime.css',
   './app-core.js','./trainer-data.js','./app.js','./trainer-runtime.js','./manifest.json',
