@@ -40,7 +40,7 @@ test('golden screen uses one runtime stylesheet and vector UI icons',()=>{
   assert.equal((css.match(/{/g)||[]).length,(css.match(/}/g)||[]).length,'CSS braces must be balanced');
 
   const sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');
-  assert.match(sw,/muscle-master-v10/);
+  assert.match(sw,/muscle-master-v11/);
   assert.doesNotMatch(sw,/\.\/style\.css|\.\/v3\.css|\.\/trainer-runtime\.css/);
 });
 
@@ -49,4 +49,12 @@ test('home trainer is clipped to the hero and status stays isolated',()=>{
   assert.match(css,/\.home-hero\s*\{[^}]*overflow:\s*hidden[^}]*contain:\s*paint/s);
   assert.match(css,/\.trainer-stage\s*\{[^}]*width:\s*210px[^}]*overflow:\s*hidden/s);
   assert.match(css,/\.home-stats\s*\{\s*position:\s*relative[^}]*overflow:\s*hidden[^}]*isolation:\s*isolate/s);
+});
+
+test('trainer name badge stays above progress and handles long names',()=>{
+  const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
+  const css=fs.readFileSync(path.join(root,'design-match.css'),'utf8');
+  assert.match(html,/id="trainerNameInput"[^>]*maxlength="20"/);
+  assert.match(css,/\.trainer-badge\s*\{[^}]*bottom:\s*66px[^}]*max-width:\s*min\(128px,\s*calc\(100%\s*-\s*30px\)\)/s);
+  assert.match(css,/\.trainer-badge b\s*\{[^}]*overflow:\s*hidden[^}]*text-overflow:\s*ellipsis[^}]*white-space:\s*nowrap/s);
 });
