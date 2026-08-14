@@ -28,6 +28,10 @@
     <symbol id="icon-dumbbell" viewBox="0 0 24 24"><path d="M2 9h2V7h3v4h10V7h3v2h2v6h-2v2h-3v-4H7v4H4v-2H2V9Z"/></symbol>
     <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="m13 5 7 7-7 7-2-2 3.5-3.5H4v-3h10.5L11 7l2-2Z"/></symbol>
     <symbol id="icon-spark" viewBox="0 0 24 24"><path d="m12 2 1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8L12 2Zm7 14 .8 2.2L22 19l-2.2.8L19 22l-.8-2.2L16 19l2.2-.8L19 16Z"/></symbol>
+    <symbol id="icon-strength" viewBox="0 0 24 24"><path d="M3 9v6M6 7v10M18 7v10M21 9v6M6 12h12"/></symbol>
+    <symbol id="icon-core" viewBox="0 0 24 24"><path d="M8 3c1.2 1 2.5 1.5 4 1.5S14.8 4 16 3l2 4-2 14H8L6 7l2-4Z"/><path d="M9 9h6M9 13h6M10 17h4"/></symbol>
+    <symbol id="icon-mobility" viewBox="0 0 24 24"><circle cx="12" cy="4" r="2"/><path d="m12 7-3 5-5 3m8-8 3 5 5 2m-8-2-3 8m3-8 4 8"/></symbol>
+    <symbol id="icon-endurance" viewBox="0 0 24 24"><path d="M13 2 5 14h6l-1 8 9-13h-6V2Z"/></symbol>
   </svg>
   <div class="app-viewport">
     <div class="phone-frame">
@@ -108,14 +112,43 @@
           </section>
         </section>
 
-        <section id="view-quest" class="view" data-view="quest">
-          <section class="page-heading">
-            <div><p class="kicker">DAILY QUEST</p><h1 id="userHeading">今日のトレーニング</h1><p id="questDescription">無理に全部やらなくてOK。終えたセットだけ記録しましょう。</p></div>
-            <button id="resetTodayButton" class="ghost-button danger">今日をリセット</button>
+        <section id="view-quest" class="view training-select-view" data-view="quest">
+          <section class="training-select-heading">
+            <div>
+              <p class="kicker">TRAINING SELECT</p>
+              <h1 id="userHeading">トレーニング選択</h1>
+              <p id="questDescription">今日のメニューから、取り組む種目を選びましょう。</p>
+            </div>
+            <button id="resetTodayButton" class="training-reset-button" aria-label="今日の記録をリセット">リセット</button>
           </section>
-          <div class="weekly-banner game-panel"><div><span id="questDayChip" class="day-chip">MON</span></div><div><small>WEEKLY PROGRAM</small><b id="questPlanName">全身A</b><span id="questPlanNote">基本の全身トレーニング</span></div></div>
-          <div class="progress-rail"><span id="progressBar"></span></div>
-          <div id="exerciseList" class="exercise-list"></div>
+
+          <section class="quest-summary game-panel" aria-labelledby="questPlanName">
+            <span id="questDayChip" class="day-chip">MON</span>
+            <div class="quest-summary-copy"><small>WEEKLY PROGRAM</small><b id="questPlanName">全身A</b><span id="questPlanNote">基本の全身トレーニング</span></div>
+            <div class="quest-summary-progress" aria-label="今日のセット進捗"><span><strong id="questProgressDone">0</strong> / <span id="questProgressTotal">0</span></span><small>SETS</small></div>
+            <div class="progress-rail"><span id="progressBar"></span></div>
+          </section>
+
+          <div class="training-filter-section">
+            <div class="training-filter-copy">
+              <div><p class="section-kicker">ABILITY FILTER</p><h2>種目を選ぶ</h2></div>
+              <span>セット完了で +10 XP</span>
+            </div>
+            <div class="training-filters" role="group" aria-label="能力カテゴリで絞り込む">
+              <button type="button" class="training-filter is-active" data-quest-filter="all" aria-pressed="true">すべて</button>
+              <button type="button" class="training-filter" data-quest-filter="strength" aria-pressed="false">筋力</button>
+              <button type="button" class="training-filter" data-quest-filter="core" aria-pressed="false">体幹</button>
+              <button type="button" class="training-filter" data-quest-filter="mobility" aria-pressed="false">柔軟</button>
+              <button type="button" class="training-filter" data-quest-filter="endurance" aria-pressed="false">持久力</button>
+            </div>
+          </div>
+
+          <div id="exerciseList" class="exercise-list" aria-live="polite"></div>
+          <div id="exerciseEmptyState" class="exercise-empty-state game-panel" hidden>
+            <svg aria-hidden="true"><use href="#icon-dumbbell"></use></svg>
+            <b>今日のメニューには該当種目がありません</b>
+            <span>「すべて」に戻すか、別の能力カテゴリを選んでください。</span>
+          </div>
           <p class="safety-note">痛み・しびれ・めまいなどが出た場合は中止してください。休養日も育成の一部です。</p>
         </section>
 
@@ -178,9 +211,14 @@
 
   <template id="exerciseTemplate">
     <article class="exercise-card game-panel">
-      <div class="exercise-number"></div>
-      <div class="exercise-copy"><p class="exercise-kind"></p><h3 class="exercise-name"></h3><p class="exercise-target"></p></div>
-      <div class="set-buttons"></div>
+      <div class="exercise-icon" aria-hidden="true"><svg><use href="#icon-strength"></use></svg></div>
+      <div class="exercise-copy">
+        <div class="exercise-card-heading"><p class="exercise-kind"></p><span class="exercise-category"></span></div>
+        <div class="exercise-title-row"><h3 class="exercise-name"></h3><span class="exercise-xp"></span></div>
+        <p class="exercise-target"></p>
+        <p class="exercise-progress"></p>
+      </div>
+      <div class="set-buttons"><span class="set-buttons-label">SET</span></div>
     </article>
   </template>
 
