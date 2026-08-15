@@ -1,7 +1,7 @@
-const CACHE_NAME='muscle-master-v16';
+const CACHE_NAME='muscle-master-v17';
 const APP_SHELL=[
   './','./index.html','./design-match.css',
-  './app-core.js','./quest-core.js','./trainer-data.js','./app.js','./trainer-runtime.js','./manifest.json','./data/quests/core.json',
+  './app-core.js','./quest-core.js','./trainer-data.js','./app.js','./trainer-runtime.js','./training-session-core.js','./training-session-runtime.js','./manifest.json','./data/quests/core.json',
   './assets/logo.png','./assets/icon.svg','./assets/icon-192.png','./assets/icon-512.png','./assets/icon-maskable-512.png',
   './assets/trainers/rio/manifest.json','./assets/trainers/rio/base-master.webp','./assets/trainers/rio/hero.webp','./assets/trainers/rio/portrait.webp','./assets/trainers/rio/level-up.webp',
   './assets/trainers/rio/expressions/neutral.webp','./assets/trainers/rio/expressions/smile.webp','./assets/trainers/rio/expressions/cheer.webp','./assets/trainers/rio/expressions/blush.webp','./assets/trainers/rio/expressions/serious.webp','./assets/trainers/rio/expressions/tired.webp','./assets/trainers/rio/expressions/angry.webp','./assets/trainers/rio/expressions/achieved.webp',
