@@ -29,9 +29,17 @@
     return Number.isFinite(parsed)?Math.max(0,Math.floor(parsed)):0;
   }
 
+  function normalizedXp(value){
+    const parsed=Number(value);
+    return Number.isFinite(parsed)?Math.max(0,Math.floor(parsed)):0;
+  }
+
   function xpForTotalSets(totalSets){return normalizedTotalSets(totalSets)*10;}
-  function levelForTotalSets(totalSets){return Math.floor(xpForTotalSets(totalSets)/100)+1;}
-  function levelProgressForTotalSets(totalSets){return xpForTotalSets(totalSets)%100;}
+  function totalXp(totalSets,bonusXp=0){return xpForTotalSets(totalSets)+normalizedXp(bonusXp);}
+  function levelForXp(value){return Math.floor(normalizedXp(value)/100)+1;}
+  function levelProgressForXp(value){return normalizedXp(value)%100;}
+  function levelForTotalSets(totalSets){return levelForXp(xpForTotalSets(totalSets));}
+  function levelProgressForTotalSets(totalSets){return levelProgressForXp(xpForTotalSets(totalSets));}
   function trainerDisplayName(name){return String(name||'').trim()||DEFAULT_TRAINER_NAME;}
   function formatClock(totalSeconds){
     const safe=Math.max(0,Math.floor(Number(totalSeconds)||0));
@@ -46,5 +54,5 @@
     return sets.findIndex(done=>!done);
   }
 
-  return {DEFAULT_TRAINER_NAME,todayKey,hasActivity,computeStreak,xpForTotalSets,levelForTotalSets,levelProgressForTotalSets,trainerDisplayName,formatClock,nextIncompleteSet};
+  return {DEFAULT_TRAINER_NAME,todayKey,hasActivity,computeStreak,normalizedXp,xpForTotalSets,totalXp,levelForXp,levelProgressForXp,levelForTotalSets,levelProgressForTotalSets,trainerDisplayName,formatClock,nextIncompleteSet};
 });

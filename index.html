@@ -195,7 +195,7 @@
 
             <aside class="reward-phase-note" role="note">
               <svg aria-hidden="true"><use href="#icon-trophy"></use></svg>
-              <div><b>報酬の受取について</b><span>今回は進捗・達成・受取状態を表示します。ボーナスXPの実付与は次のアップデートで接続します。</span></div>
+              <div><b>報酬の受取について</b><span>達成した報酬は1回だけ受け取れます。セットを取り消しても、受取済みのボーナスXPは維持されます。</span></div>
             </aside>
           </section>
         </section>
@@ -284,6 +284,20 @@
     </form>
   </dialog>
 
+  <div id="rewardPresentationOverlay" class="reward-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="rewardPresentationTitle">
+    <article id="rewardPresentationCard" class="reward-card tier-standard">
+      <div class="reward-presentation-kicker"><svg><use href="#icon-spark" /></svg><span>MISSION CLEAR</span><svg><use href="#icon-spark" /></svg></div>
+      <p class="reward-presentation-label">QUEST REWARD</p>
+      <h2 id="rewardPresentationTitle">ミッション達成</h2>
+      <img id="rewardPresentationImage" class="reward-presentation-image" src="./assets/trainers/rio/portrait.webp" alt="報酬獲得を祝うリオ" />
+      <div class="reward-xp" aria-label="獲得ボーナスXP"><span>+<strong id="rewardPresentationXp">0</strong></span><b>XP</b></div>
+      <p id="rewardPresentationDescription" class="reward-presentation-description"></p>
+      <p id="rewardPresentationDialogue" class="reward-presentation-dialogue"></p>
+      <span id="rewardPresentationLevel" class="reward-presentation-level"></span>
+      <button id="rewardPresentationClose" class="primary-button" type="button">受取を確認して続ける</button>
+    </article>
+  </div>
+
   <div id="levelUpOverlay" class="levelup-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="levelUpNumber">
     <div class="levelup-card">
       <div class="levelup-kicker"><svg><use href="#icon-spark" /></svg><span>TRAINING RESULT</span><svg><use href="#icon-spark" /></svg></div>
@@ -328,6 +342,7 @@
         <p class="mission-description"></p>
         <div class="mission-progress-copy"><span><b class="mission-value">0</b> / <span class="mission-target">0</span></span><strong class="mission-reward">報酬予定</strong></div>
         <div class="mission-progress-rail"><span></span></div>
+        <button class="mission-claim-button" type="button" hidden>報酬を受け取る</button>
       </div>
     </article>
   </template>

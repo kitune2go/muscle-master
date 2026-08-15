@@ -40,7 +40,7 @@ test('golden screen uses one runtime stylesheet and vector UI icons',()=>{
   assert.equal((css.match(/{/g)||[]).length,(css.match(/}/g)||[]).length,'CSS braces must be balanced');
 
   const sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');
-  assert.match(sw,/muscle-master-v15/);
+  assert.match(sw,/muscle-master-v16/);
   assert.doesNotMatch(sw,/\.\/style\.css|\.\/v3\.css|\.\/trainer-runtime\.css/);
 });
 
@@ -58,7 +58,7 @@ test('quest foundation loads JSON definitions and evaluates training events',()=
   assert.ok(pack.quests.some(quest=>quest.type==='weekly'));
 });
 
-test('mission board exposes progress, completion and receipt states without granting rewards',()=>{
+test('mission board grants rewards once and exposes the persistent presentation queue',()=>{
   const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
   const app=fs.readFileSync(path.join(root,'app.js'),'utf8');
   const core=fs.readFileSync(path.join(root,'quest-core.js'),'utf8');
@@ -69,15 +69,26 @@ test('mission board exposes progress, completion and receipt states without gran
   }
   assert.match(html,/data-quest-mode="training"/);
   assert.match(html,/data-quest-mode="missions"/);
-  assert.match(html,/ボーナスXPの実付与は次のアップデート/);
+  for(const id of ['rewardPresentationOverlay','rewardPresentationCard','rewardPresentationTitle','rewardPresentationXp','rewardPresentationClose']){
+    assert.match(html,new RegExp(`id="${id}"`));
+  }
+  assert.match(html,/class="mission-claim-button"/);
+  assert.match(html,/達成した報酬は1回だけ受け取れます/);
   assert.match(app,/QuestCore\.buildMissionViewModels/);
+  assert.match(app,/QuestCore\.grantReward/);
+  assert.match(app,/QuestCore\.acknowledgePresentation/);
+  assert.match(app,/function showNextRewardPresentation\(\)/);
+  assert.match(app,/Core\.totalXp\(state\.totalSets,state\.bonusXp\)/);
   assert.match(app,/active:\{label:'進行中'\}/);
   assert.match(app,/completed:\{label:'達成済み'\}/);
   assert.match(app,/claimed:\{label:'受取済み'\}/);
   assert.match(core,/function buildMissionViewModels/);
+  assert.match(core,/function grantReward/);
+  assert.match(core,/presentationQueue/);
   assert.match(css,/\.quest-mode-button\s*\{[^}]*min-height:\s*44px/s);
   assert.match(css,/\.mission-card\.status-completed/);
-  assert.doesNotMatch(app,/recordRewardClaim\(/);
+  assert.match(css,/\.mission-claim-button\s*\{[^}]*min-height:\s*44px/s);
+  assert.match(css,/\.reward-overlay\.show/);
 });
 
 test('training selection exposes readable filters and set status',()=>{
