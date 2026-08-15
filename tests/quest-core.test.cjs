@@ -73,6 +73,60 @@ test('reward claim ledger rejects duplicate records for the same quest instance'
   assert.deepEqual(duplicate.claim,first.claim);
 });
 
+test('reward grant adds bonus XP and a presentation exactly once',()=>{
+  const now=new Date(2026,7,12,12);
+  const evaluation=Quest.evaluateQuestPack(pack,trainingState,{now,exerciseCatalog});
+  const merged=Quest.mergeQuestEvaluation({},evaluation,now);
+  const target=merged.newlyCompleted.find(completion=>completion.questId==='daily_complete_3_sets');
+  const first=Quest.grantReward(merged.state,target.instanceId,10,{now:new Date(2026,7,12,13),totalXpBefore:70});
+  const duplicate=Quest.grantReward(first.state,target.instanceId,first.bonusXp,{now:new Date(2026,7,12,14),totalXpBefore:90});
+
+  assert.equal(first.granted,true);
+  assert.equal(first.xpGranted,20);
+  assert.equal(first.bonusXp,30);
+  assert.equal(first.claim.granted.xp,20);
+  assert.equal(first.presentation.totalXpBefore,70);
+  assert.equal(first.presentation.totalXpAfter,90);
+  assert.equal(first.state.presentationQueue.length,1);
+  assert.equal(duplicate.granted,false);
+  assert.equal(duplicate.reason,'already-granted');
+  assert.equal(duplicate.bonusXp,30);
+  assert.equal(duplicate.state.presentationQueue.length,1);
+});
+
+test('presentation acknowledgement does not remove the reward grant',()=>{
+  const now=new Date(2026,7,12,12);
+  const evaluation=Quest.evaluateQuestPack(pack,trainingState,{now,exerciseCatalog});
+  const merged=Quest.mergeQuestEvaluation({},evaluation,now);
+  const target=merged.newlyCompleted[0];
+  const granted=Quest.grantReward(merged.state,target.instanceId,0,{now,totalXpBefore:60});
+  const pending=Quest.nextPresentation(granted.state);
+  const acknowledged=Quest.acknowledgePresentation(granted.state,pending.id);
+
+  assert.equal(acknowledged.acknowledged,true);
+  assert.equal(acknowledged.state.presentationQueue.length,0);
+  assert.ok(acknowledged.state.rewardClaims[target.instanceId]);
+  const afterReplay=Quest.grantReward(acknowledged.state,target.instanceId,granted.bonusXp,{now,totalXpBefore:65});
+  assert.equal(afterReplay.granted,false);
+  assert.equal(afterReplay.bonusXp,granted.bonusXp);
+});
+
+test('a granted reward remains claimed after progress is reverted',()=>{
+  const now=new Date(2026,7,12,12);
+  const evaluation=Quest.evaluateQuestPack(pack,trainingState,{now,exerciseCatalog});
+  const merged=Quest.mergeQuestEvaluation({},evaluation,now);
+  const target=merged.newlyCompleted[0];
+  const granted=Quest.grantReward(merged.state,target.instanceId,0,{now,totalXpBefore:60});
+  const reduced=Quest.evaluateQuestPack(pack,{totalSets:0,days:{}},{now,exerciseCatalog});
+  const afterUndo=Quest.mergeQuestEvaluation(granted.state,reduced,new Date(2026,7,12,13));
+  const duplicate=Quest.grantReward(afterUndo.state,target.instanceId,granted.bonusXp,{now:new Date(2026,7,12,14),totalXpBefore:granted.bonusXp});
+
+  assert.ok(afterUndo.state.completions[target.instanceId]);
+  assert.ok(afterUndo.state.rewardClaims[target.instanceId]);
+  assert.equal(duplicate.granted,false);
+  assert.equal(duplicate.bonusXp,granted.bonusXp);
+});
+
 test('mission view models distinguish active, completed and claimed states',()=>{
   const now=new Date(2026,7,12,12);
   const evaluation=Quest.evaluateQuestPack(pack,trainingState,{now,exerciseCatalog});
@@ -97,6 +151,6 @@ test('mission view models distinguish active, completed and claimed states',()=>
 test('legacy saves receive optional quest state without changing training data',()=>{
   const legacy={totalSets:3,days:{'2026-08-12':{squat:[true,true,true]}}};
   const quests=Quest.normalizeQuestState(legacy.quests);
-  assert.deepEqual(quests,{schemaVersion:1,progress:{},completions:{},rewardClaims:{}});
+  assert.deepEqual(quests,{schemaVersion:1,progress:{},completions:{},rewardClaims:{},presentationQueue:[]});
   assert.equal(legacy.totalSets,3);
 });

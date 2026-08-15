@@ -8,6 +8,14 @@ test('XP and levels advance every ten completed sets',()=>{
   assert.equal(Core.levelProgressForTotalSets(14),40);
 });
 
+test('bonus XP is additive without changing completed-set XP',()=>{
+  assert.equal(Core.totalXp(3,20),50);
+  assert.equal(Core.xpForTotalSets(3),30);
+  assert.equal(Core.levelForXp(Core.totalXp(8,25)),2);
+  assert.equal(Core.levelProgressForXp(Core.totalXp(8,25)),5);
+  assert.equal(Core.totalXp(3,-100),30);
+});
+
 test('the default trainer remains Rio when no custom name exists',()=>{
   assert.equal(Core.trainerDisplayName(''),'リオ');
   assert.equal(Core.trainerDisplayName('  コーチ  '),'コーチ');

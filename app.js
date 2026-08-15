@@ -44,7 +44,7 @@ const weeklyPlans={
   6:{code:'SAT',name:'選択チャレンジ',note:'余裕があれば軽く挑戦',ids:['squat','pushup','plank','mobility']}
 };
 
-const defaultState={userName:'',trainerId:'rio',trainerName:'リオ',days:{},totalSets:0,stats:{strength:0,core:0,mobility:0,endurance:0},sound:true,lastShownLevel:1,quests:QuestCore.normalizeQuestState()};
+const defaultState={userName:'',trainerId:'rio',trainerName:'リオ',days:{},totalSets:0,bonusXp:0,stats:{strength:0,core:0,mobility:0,endurance:0},sound:true,lastShownLevel:1,quests:QuestCore.normalizeQuestState()};
 function cloneDefault(){return JSON.parse(JSON.stringify(defaultState));}
 function todayKey(date=new Date()){return Core.todayKey(date);}
 function dateFromKey(key){return new Date(`${key}T00:00:00`);}
@@ -70,8 +70,10 @@ let questEvaluation=null;
 let questLoadError=false;
 let activeWorkoutId=null;
 let workoutSetIndex=0;
+let activePresentationId=null;
+let startupSettingsPending=!state.userName;
 const workoutClock={running:false,elapsed:0,remaining:0,intervalId:null};
-state.stats={...defaultState.stats,...(state.stats||{})};state.days||={};state.quests=QuestCore.normalizeQuestState(state.quests);
+state.stats={...defaultState.stats,...(state.stats||{})};state.days||={};state.bonusXp=Core.normalizedXp(state.bonusXp);state.quests=QuestCore.normalizeQuestState(state.quests);
 function saveState(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
 
 function evaluateQuests(){
@@ -110,9 +112,9 @@ function completedSetsForKey(key){const day=state.days[key]||{};return exercises
 function requiredSetsForKey(key){return exercisesForKey(key).reduce((sum,e)=>sum+e.sets,0);}
 function getProgress(key=todayKey()){const total=requiredSetsForKey(key);return total?Math.min(100,Math.round(completedSetsForKey(key)/total*100)):0;}
 function getStreak(){return Core.computeStreak(state.days,new Date());}
-function xp(){return Core.xpForTotalSets(state.totalSets);}
-function level(){return Core.levelForTotalSets(state.totalSets);}
-function levelProgress(){return Core.levelProgressForTotalSets(state.totalSets);}
+function xp(){return Core.totalXp(state.totalSets,state.bonusXp);}
+function level(){return Core.levelForXp(xp());}
+function levelProgress(){return Core.levelProgressForXp(xp());}
 function addStats(ex,direction){for(const [key,amount] of Object.entries(ex.stats))state.stats[key]=Math.max(0,Math.min(100,(state.stats[key]||0)+amount*direction));}
 function firstIncomplete(){const key=todayKey(),day=ensureDay(key);for(const ex of exercisesForKey(key)){const idx=day[ex.id].findIndex(v=>!v);if(idx!==-1)return{ex,index:idx};}return null;}
 function formatDate(key){return new Intl.DateTimeFormat('ja-JP',{month:'short',day:'numeric',weekday:'short'}).format(dateFromKey(key));}
@@ -135,11 +137,88 @@ function tone(freq,duration=.08,type='sine',gain=.035,delay=0){if(!state.sound)r
 function playComplete(){tone(520,.07,'triangle');tone(740,.1,'triangle',.03,.06);}
 function playUndo(){tone(300,.07,'sine',.025);}
 function playLevelUp(){[523,659,784,1047].forEach((f,i)=>tone(f,.2,'triangle',.04,i*.09));}
+function playRewardTone(tier='standard'){
+  const notes=tier==='minor'?[587,784]:tier==='major'||tier==='special'?[523,659,784,988]:[587,740,880];
+  notes.forEach((frequency,index)=>tone(frequency,.16,'triangle',.035,index*.08));
+}
+function playRewardSound(item){
+  if(!state.sound)return;
+  const audioUrl=item?.presentation?.media?.audioUrl;
+  if(audioUrl){
+    try{const audio=new Audio(audioUrl);audio.play().catch(()=>playRewardTone(item?.presentation?.tier));return;}catch{}
+  }
+  playRewardTone(item?.presentation?.tier);
+}
 function pulseTrainer(){['#trainerStage','#workoutTrainerImage'].forEach(selector=>{const el=document.querySelector(selector);if(!el)return;el.classList.remove('trainer-cheer');void el.offsetWidth;el.classList.add('trainer-cheer');setTimeout(()=>el.classList.remove('trainer-cheer'),700);});}
 function showToast(text,toneName='default'){const t=document.querySelector('#toast');t.textContent=text;t.dataset.tone=toneName;t.classList.add('show');clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>t.classList.remove('show'),1700);}
-function confetti(){const layer=document.querySelector('#confetti');layer.innerHTML='';for(let i=0;i<36;i++){const s=document.createElement('i');s.style.left=`${Math.random()*100}%`;s.style.setProperty('--x',`${(Math.random()-.5)*180}px`);s.style.setProperty('--r',`${Math.random()*520-260}deg`);s.style.animationDelay=`${Math.random()*.2}s`;layer.appendChild(s);}setTimeout(()=>layer.innerHTML='',1800);}
+function prefersReducedMotion(){return Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches);}
+function confetti(){if(prefersReducedMotion())return;const layer=document.querySelector('#confetti');layer.innerHTML='';for(let i=0;i<36;i++){const s=document.createElement('i');s.style.left=`${Math.random()*100}%`;s.style.setProperty('--x',`${(Math.random()-.5)*180}px`);s.style.setProperty('--r',`${Math.random()*520-260}deg`);s.style.animationDelay=`${Math.random()*.2}s`;layer.appendChild(s);}setTimeout(()=>layer.innerHTML='',1800);}
 function showLevelUp(newLevel){document.querySelector('#levelUpNumber').textContent=`LV. ${newLevel}`;document.querySelector('#levelUpMessage').textContent=`${state.userName||'プレイヤー'}、新しいレベルに到達！`;const overlay=document.querySelector('#levelUpOverlay');overlay.classList.add('show');overlay.setAttribute('aria-hidden','false');playLevelUp();confetti();pulseTrainer();}
 function checkLevelUp(previousLevel){const now=level();if(now>previousLevel){state.lastShownLevel=now;saveState();showLevelUp(now);}}
+
+function presentationLevelRange(item){
+  if(item?.totalXpBefore===null||item?.totalXpAfter===null)return null;
+  if(!Number.isFinite(Number(item?.totalXpBefore))||!Number.isFinite(Number(item?.totalXpAfter)))return null;
+  const before=Core.levelForXp(item.totalXpBefore),after=Core.levelForXp(item.totalXpAfter);
+  return {before,after};
+}
+function showNextRewardPresentation(){
+  const overlay=document.querySelector('#rewardPresentationOverlay');
+  if(startupSettingsPending||settingsDialog.open||activePresentationId||overlay.classList.contains('show')||document.querySelector('#levelUpOverlay').classList.contains('show'))return;
+  const item=QuestCore.nextPresentation(state.quests);
+  if(!item)return;
+  activePresentationId=item.id;
+  const presentation=item.presentation||{},tier=['minor','standard','major','special'].includes(presentation.tier)?presentation.tier:'standard';
+  const trainer=currentTrainer(),fallbackImage=trainer?.assets?.portrait||'./assets/trainers/rio/portrait.webp';
+  const image=document.querySelector('#rewardPresentationImage'),dialogues=presentation.trainerDialogue||{};
+  const xpGranted=Core.normalizedXp(item.reward?.xp),levels=presentationLevelRange(item);
+  const card=document.querySelector('#rewardPresentationCard');
+  card.classList.remove('tier-minor','tier-standard','tier-major','tier-special');
+  card.classList.add(`tier-${tier}`);
+  document.querySelector('#rewardPresentationTitle').textContent=presentation.title||'ミッション達成';
+  document.querySelector('#rewardPresentationXp').textContent=xpGranted;
+  document.querySelector('#rewardPresentationDescription').textContent=presentation.description||'報酬を受け取りました。';
+  document.querySelector('#rewardPresentationDialogue').textContent=dialogues[state.trainerId]||dialogues.default||'達成おめでとう！ この積み重ねが次の成長につながるわ。';
+  document.querySelector('#rewardPresentationLevel').textContent=levels?.after>levels?.before?`LEVEL ${levels.before} → ${levels.after}`:item.totalXpAfter===null?'ボーナスXPを保存しました':`TOTAL ${Core.normalizedXp(item.totalXpAfter)} XP`;
+  image.onerror=()=>{image.onerror=null;image.src=fallbackImage;};
+  image.src=presentation.media?.imageUrl||fallbackImage;
+  image.alt=`報酬獲得を祝う${Core.trainerDisplayName(state.trainerName||trainer?.displayName)}`;
+  overlay.classList.add('show');
+  overlay.setAttribute('aria-hidden','false');
+  playRewardSound(item);
+  if(tier!=='minor')confetti();
+  requestAnimationFrame(()=>document.querySelector('#rewardPresentationClose').focus());
+}
+function closeRewardPresentation(){
+  if(!activePresentationId)return;
+  const acknowledged=QuestCore.acknowledgePresentation(state.quests,activePresentationId),item=acknowledged.presentation;
+  state.quests=acknowledged.state;
+  activePresentationId=null;
+  const overlay=document.querySelector('#rewardPresentationOverlay');
+  overlay.classList.remove('show');
+  overlay.setAttribute('aria-hidden','true');
+  saveState();
+  const levels=presentationLevelRange(item);
+  if(levels?.after>levels?.before){state.lastShownLevel=levels.after;saveState();showLevelUp(levels.after);return;}
+  setTimeout(showNextRewardPresentation,80);
+}
+function claimMissionReward(instanceId,button){
+  if(button)button.disabled=true;
+  const totalXpBefore=xp();
+  const result=QuestCore.grantReward(state.quests,instanceId,state.bonusXp,{now:new Date(),totalXpBefore});
+  state.quests=result.state;
+  if(!result.granted){
+    if(button)button.disabled=false;
+    renderQuest();
+    showToast(result.reason==='already-granted'?'この報酬は受取済みです':'達成後に受け取れます','undo');
+    return;
+  }
+  state.bonusXp=result.bonusXp;
+  saveState();
+  render();
+  showToast(`ボーナス +${result.xpGranted} XPを受け取りました`,'success');
+  showNextRewardPresentation();
+}
 
 function renderPlanLabels(){const plan=planForDate(),user=state.userName?`${state.userName}さん、`:'';['#weekdayChip','#questDayChip'].forEach(id=>document.querySelector(id).textContent=plan.code);['#planName','#questPlanName'].forEach(id=>document.querySelector(id).textContent=plan.name);['#planNote','#questPlanNote'].forEach(id=>document.querySelector(id).textContent=plan.note);document.querySelector('#questDescription').textContent=plan.name==='回復日'?`${user}今日は軽く身体を動かす日です。`:`${user}今日のメニューから取り組む種目を選びましょう。`;}
 function renderHome(){const key=todayKey(),progress=getProgress(key),lv=level();document.querySelector('#progressText').textContent=`${progress}%`;document.querySelector('#streakText').textContent=getStreak();document.querySelector('#totalSetsText').textContent=state.totalSets;document.querySelector('#trainerName').textContent=Core.trainerDisplayName(state.trainerName);document.querySelector('#trainerMessage').textContent=trainerMessage(progress);document.querySelector('#levelText').textContent=`LV. ${lv}`;document.querySelector('#xpText').textContent=`${xp()} XP`;document.querySelector('#heroTitle').innerHTML=state.userName?`${escapeHtml(state.userName)}を<br><em>1段階</em>アップデート。`:`今日の自分を<br><em>1段階</em>アップデート。`;const quick=document.querySelector('#quickQuest'),next=firstIncomplete();if(!next)quick.innerHTML='<div class="quick-item"><div><strong>本日のクエスト完了</strong><span>今日は回復まで含めて育成です。</span></div><button data-tab-link="status">成長を見る</button></div>';else quick.innerHTML=`<div class="quick-item"><div><strong>${next.ex.name} · SET ${next.index+1}</strong><span>${next.ex.kind}｜${next.ex.target}</span></div><button data-quick="${next.ex.id}" data-index="${next.index}">完了する</button></div>`;}
@@ -183,6 +262,14 @@ function createMissionCard(mission){
   node.querySelector('.mission-target').textContent=mission.target;
   node.querySelector('.mission-reward').textContent=missionRewardLabel(mission);
   node.querySelector('.mission-progress-rail span').style.width=`${mission.percent}%`;
+  const claimButton=node.querySelector('.mission-claim-button');
+  if(mission.status==='completed'){
+    const rewardXp=Core.normalizedXp(mission.reward?.xp);
+    claimButton.hidden=false;
+    claimButton.textContent=rewardXp?`+${rewardXp} XPを受け取る`:'報酬を受け取る';
+    claimButton.setAttribute('aria-label',`${mission.presentation.title}の報酬${rewardXp?`、${rewardXp} XP`:''}を受け取る`);
+    claimButton.addEventListener('click',()=>claimMissionReward(mission.instanceId,claimButton));
+  }
   return node;
 }
 function renderMissionGroup(type,groupSelector,listSelector,countSelector,missions){
@@ -389,10 +476,11 @@ function bindDynamicLinks(){document.querySelectorAll('[data-tab-link]').forEach
 
 const settingsDialog=document.querySelector('#settingsDialog');
 document.querySelector('#settingsButton').addEventListener('click',()=>{document.querySelector('#userNameInput').value=state.userName||'';document.querySelector('#trainerNameInput').value=Core.trainerDisplayName(state.trainerName);settingsDialog.showModal();});
-document.querySelector('#settingsCloseButton').addEventListener('click',()=>settingsDialog.close());
-document.querySelector('#settingsForm').addEventListener('submit',event=>{event.preventDefault();state.userName=document.querySelector('#userNameInput').value.trim();state.trainerName=Core.trainerDisplayName(document.querySelector('#trainerNameInput').value);saveState();settingsDialog.close();render();});
+document.querySelector('#settingsCloseButton').addEventListener('click',()=>{settingsDialog.close();startupSettingsPending=false;setTimeout(showNextRewardPresentation,80);});
+document.querySelector('#settingsForm').addEventListener('submit',event=>{event.preventDefault();state.userName=document.querySelector('#userNameInput').value.trim();state.trainerName=Core.trainerDisplayName(document.querySelector('#trainerNameInput').value);saveState();settingsDialog.close();startupSettingsPending=false;render();setTimeout(showNextRewardPresentation,80);});
 document.querySelector('#soundButton').addEventListener('click',()=>{state.sound=!state.sound;saveState();render();if(state.sound){tone(660,.08,'triangle');showToast('効果音 ON','success');}else showToast('効果音 OFF','undo');});
-document.querySelector('#levelUpClose').addEventListener('click',()=>{const o=document.querySelector('#levelUpOverlay');o.classList.remove('show');o.setAttribute('aria-hidden','true');});
+document.querySelector('#rewardPresentationClose').addEventListener('click',closeRewardPresentation);
+document.querySelector('#levelUpClose').addEventListener('click',()=>{const o=document.querySelector('#levelUpOverlay');o.classList.remove('show');o.setAttribute('aria-hidden','true');setTimeout(showNextRewardPresentation,80);});
 document.querySelectorAll('[data-quest-mode]').forEach(button=>{
   button.addEventListener('click',()=>{questMode=button.dataset.questMode==='missions'?'missions':'training';renderQuest();});
   button.addEventListener('keydown',event=>{
@@ -415,4 +503,4 @@ document.querySelector('#resetTodayButton').addEventListener('click',()=>{if(!co
 window.addEventListener('hashchange',()=>showView(location.hash.replace('#','')||'home'));
 if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 
-ensureDay();if(!state.lastShownLevel)state.lastShownLevel=level();render();showView(['home','quest','status','log'].includes(location.hash.slice(1))?location.hash.slice(1):'home');loadQuestPack();if(!state.userName)setTimeout(()=>settingsDialog.showModal(),300);
+ensureDay();if(!state.lastShownLevel)state.lastShownLevel=level();render();showView(['home','quest','status','log'].includes(location.hash.slice(1))?location.hash.slice(1):'home');loadQuestPack();setTimeout(showNextRewardPresentation,0);if(!state.userName)setTimeout(()=>settingsDialog.showModal(),300);

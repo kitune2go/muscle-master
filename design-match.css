@@ -1609,6 +1609,35 @@ svg {
   transition: width 350ms ease;
 }
 
+.mission-claim-button {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 8px;
+  padding: 7px 10px;
+  color: #fff;
+  background: linear-gradient(#df3d49, #9f1720);
+  border: 1px solid #6e0d14;
+  border-radius: 7px;
+  box-shadow: inset 0 1px #ff9aa1, 0 3px 0 #6f1117;
+  font-size: 0.58rem;
+  font-weight: 900;
+}
+
+.mission-claim-button:active {
+  transform: translateY(2px);
+  box-shadow: inset 0 1px #ff9aa1, 0 1px 0 #6f1117;
+}
+
+.mission-claim-button:disabled {
+  cursor: wait;
+  filter: grayscale(0.3);
+  opacity: 0.7;
+}
+
+.mission-claim-button[hidden] {
+  display: none;
+}
+
 .mission-empty-state {
   display: grid;
   justify-items: center;
@@ -2722,6 +2751,170 @@ dialog::backdrop {
 
 .primary-button.full {
   width: 100%;
+}
+
+.reward-overlay {
+  position: fixed;
+  z-index: 125;
+  inset: 0;
+  display: none;
+  place-items: center;
+  overflow-y: auto;
+  padding: 12px;
+  background: radial-gradient(circle at 50% 38%, #8b6a19d9, #151820eb 61%, #05070af5);
+  backdrop-filter: blur(7px);
+}
+
+.reward-overlay.show {
+  display: grid;
+}
+
+.reward-card {
+  --reward-accent: #d39b22;
+  position: relative;
+  width: min(100%, 390px);
+  min-height: 560px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 17px 16px;
+  overflow: hidden;
+  color: #fff;
+  text-align: center;
+  background:
+    radial-gradient(circle at 50% 32%, color-mix(in srgb, var(--reward-accent) 45%, transparent), transparent 42%),
+    linear-gradient(155deg, #343b45, #171a20 58%, #0b0d11);
+  border: 3px solid var(--gold-hi);
+  border-radius: 16px;
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--reward-accent) 56%, transparent), 0 9px 0 #08090c, 0 35px 90px #000d, inset 0 1px #fff4;
+  animation: level-card-in 420ms cubic-bezier(0.16, 0.9, 0.2, 1.15) both;
+}
+
+.reward-card.tier-minor {
+  --reward-accent: #788d51;
+}
+
+.reward-card.tier-major {
+  --reward-accent: #e28b16;
+}
+
+.reward-card.tier-special {
+  --reward-accent: #8b54bd;
+}
+
+.reward-card::before {
+  content: "";
+  position: absolute;
+  top: 65px;
+  left: 50%;
+  width: 510px;
+  height: 510px;
+  background: repeating-conic-gradient(from 0deg, transparent 0 10deg, color-mix(in srgb, var(--reward-accent) 28%, transparent) 10deg 16deg);
+  transform: translateX(-50%);
+  animation: result-rays 22s linear infinite;
+}
+
+.reward-card > * {
+  position: relative;
+  z-index: 2;
+}
+
+.reward-presentation-kicker {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #ffe7a2;
+  font-size: 0.46rem;
+  letter-spacing: 0.2em;
+}
+
+.reward-presentation-kicker svg {
+  width: 13px;
+  height: 13px;
+  fill: var(--gold-hi);
+}
+
+.reward-presentation-label {
+  margin: 10px 0 0;
+  color: #ffd866;
+  font-size: 0.46rem;
+  font-weight: 1000;
+  letter-spacing: 0.18em;
+}
+
+.reward-card h2 {
+  margin: 2px 0 0;
+  font-family: var(--font-display);
+  font-size: 1.55rem;
+  line-height: 1.25;
+  text-shadow: 0 3px 0 #0008;
+}
+
+.reward-presentation-image {
+  width: 82%;
+  height: 220px;
+  margin: 0 auto -8px;
+  object-fit: contain;
+  filter: drop-shadow(0 13px 16px #000a);
+  animation: result-trainer-in 580ms 80ms cubic-bezier(0.15, 0.88, 0.2, 1.1) both;
+}
+
+.reward-xp {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  padding: 7px 20px 5px;
+  color: #402700;
+  background: linear-gradient(#fff0a1, #e6a724);
+  border: 2px solid #fff2aa;
+  border-radius: 99px;
+  box-shadow: 0 4px 0 #8a560d, 0 0 24px color-mix(in srgb, var(--reward-accent) 75%, transparent);
+}
+
+.reward-xp span {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+}
+
+.reward-xp strong {
+  font-size: 1.85rem;
+}
+
+.reward-xp b {
+  font-size: 0.72rem;
+}
+
+.reward-presentation-description {
+  margin: 13px 0 0;
+  color: #dce0e6;
+  font-size: 0.61rem;
+  line-height: 1.5;
+}
+
+.reward-presentation-dialogue {
+  width: 100%;
+  margin: 9px 0 0;
+  padding: 9px 11px;
+  color: #fff1cb;
+  background: #201a18df;
+  border: 1px solid var(--reward-accent);
+  border-radius: 8px;
+  font-size: 0.66rem;
+  line-height: 1.55;
+}
+
+.reward-presentation-level {
+  margin: 7px 0 10px;
+  color: #ffe08a;
+  font-size: 0.53rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+}
+
+.reward-card > button {
+  width: 100%;
+  min-height: 44px;
+  margin-top: auto;
 }
 
 .levelup-overlay {

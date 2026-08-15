@@ -95,7 +95,8 @@
       schemaVersion:SCHEMA_VERSION,
       progress:cleanRecord(source.progress),
       completions:cleanRecord(source.completions),
-      rewardClaims:cleanRecord(source.rewardClaims)
+      rewardClaims:cleanRecord(source.rewardClaims),
+      presentationQueue:Array.isArray(source.presentationQueue)?source.presentationQueue.filter(item=>isRecord(item)&&typeof item.id==='string'&&item.id).map(clone):[]
     };
   }
   function exerciseMatches(exerciseId,filters,catalog){
@@ -205,5 +206,54 @@
     return {state,recorded:true,reason:null,claim:clone(claim)};
   }
 
-  return {SCHEMA_VERSION,dateKey,periodForQuest,validateQuestPack,normalizeQuestState,evaluateQuestPack,mergeQuestEvaluation,buildMissionViewModels,recordRewardClaim};
+  function normalizedXp(value){
+    const parsed=Number(value);
+    return Number.isFinite(parsed)?Math.max(0,Math.floor(parsed)):0;
+  }
+  function grantReward(current,instanceId,currentBonusXp=0,options={}){
+    const state=normalizeQuestState(current),completion=state.completions[instanceId],bonusXp=normalizedXp(currentBonusXp),settings=isRecord(options)?options:{};
+    if(!completion)return {state,bonusXp,granted:false,reason:'not-completed',claim:null,presentation:null,xpGranted:0};
+    if(state.rewardClaims[instanceId])return {state,bonusXp,granted:false,reason:'already-granted',claim:clone(state.rewardClaims[instanceId]),presentation:null,xpGranted:0};
+
+    const grantedAt=toDate(settings.now||new Date()).toISOString();
+    const xpGranted=normalizedXp(completion.reward?.xp);
+    const hasTotalXpBefore=settings.totalXpBefore!==null&&settings.totalXpBefore!==undefined&&Number.isFinite(Number(settings.totalXpBefore));
+    const totalXpBefore=hasTotalXpBefore?normalizedXp(settings.totalXpBefore):null;
+    const claim={
+      questId:completion.questId,
+      periodKey:completion.periodKey,
+      reward:clone(completion.reward),
+      claimedAt:grantedAt,
+      grantVersion:1,
+      granted:{xp:xpGranted}
+    };
+    const presentation={
+      id:`quest-reward:${instanceId}`,
+      kind:'quest-reward',
+      instanceId,
+      questId:completion.questId,
+      periodKey:completion.periodKey,
+      reward:clone(completion.reward),
+      presentation:clone(completion.presentation),
+      queuedAt:grantedAt,
+      totalXpBefore,
+      totalXpAfter:totalXpBefore===null?null:totalXpBefore+xpGranted
+    };
+    state.rewardClaims[instanceId]=claim;
+    if(!state.presentationQueue.some(item=>item.id===presentation.id))state.presentationQueue.push(presentation);
+    return {state,bonusXp:bonusXp+xpGranted,granted:true,reason:null,claim:clone(claim),presentation:clone(presentation),xpGranted};
+  }
+  function nextPresentation(current){
+    const state=normalizeQuestState(current);
+    return state.presentationQueue.length?clone(state.presentationQueue[0]):null;
+  }
+  function acknowledgePresentation(current,presentationId){
+    const state=normalizeQuestState(current);
+    const index=state.presentationQueue.findIndex(item=>item.id===presentationId);
+    if(index===-1)return {state,acknowledged:false,presentation:null};
+    const [presentation]=state.presentationQueue.splice(index,1);
+    return {state,acknowledged:true,presentation:clone(presentation)};
+  }
+
+  return {SCHEMA_VERSION,dateKey,periodForQuest,validateQuestPack,normalizeQuestState,evaluateQuestPack,mergeQuestEvaluation,buildMissionViewModels,recordRewardClaim,grantReward,nextPresentation,acknowledgePresentation};
 });

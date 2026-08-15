@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>Muscle Master DEV Reset</title>
+  <style>
+    :root{color-scheme:dark;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:#101319;color:#f7f3e8}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;padding:24px;background:radial-gradient(circle at top,#3a2024,#101319 55%)}
+    main{width:min(100%,680px);margin:auto;display:grid;gap:16px}.card{padding:18px;border:1px solid #6f7785;border-radius:16px;background:#1b2029;box-shadow:0 12px 40px #0006}
+    h1,h2,p{margin-top:0}h1{font-size:1.45rem}h2{font-size:1rem}.muted{color:#b9c0ca;font-size:.9rem;line-height:1.65}.danger{border-color:#b44752;background:#2a1b20}.warning{color:#ffd875}
+    dl{display:grid;grid-template-columns:1fr auto;gap:8px 16px;margin:0}dt{color:#b9c0ca}dd{margin:0;font-weight:800}
+    .actions{display:grid;gap:10px}.button,button{min-height:48px;border:1px solid #87909d;border-radius:12px;padding:10px 14px;background:#303744;color:#fff;font:inherit;font-weight:800;text-decoration:none;text-align:center;cursor:pointer}
+    button.primary{background:#a82d39;border-color:#e05b67}button.secondary{background:#4b3c19;border-color:#d8a632}button:disabled{opacity:.45;cursor:not-allowed}.button:hover,button:hover:not(:disabled){filter:brightness(1.08)}
+    code{padding:.15em .35em;border-radius:5px;background:#0e1116;color:#ffd875}.status{min-height:1.4em;margin:10px 0 0;color:#9ed7a8;font-weight:700}.hidden{display:none!important}
+  </style>
+</head>
+<body>
+<main>
+  <section class="card danger">
+    <h1>Muscle Master — 開発者用リセット</h1>
+    <p class="muted">このページはQA専用です。本番UIの「今日の記録をリセット」とは独立しており、通常ユーザー向けの報酬受取済み状態は取り消せません。</p>
+    <p id="modeWarning" class="warning">開発モードが無効です。URL末尾に <code>?dev=1</code> を付けた場合のみ操作できます。</p>
+  </section>
+
+  <section class="card">
+    <h2>現在の保存状態</h2>
+    <dl>
+      <dt>累計セット</dt><dd id="totalSets">—</dd>
+      <dt>ボーナスXP</dt><dd id="bonusXp">—</dd>
+      <dt>合計XP</dt><dd id="totalXp">—</dd>
+      <dt>レベル</dt><dd id="level">—</dd>
+      <dt>保存キー</dt><dd><code>muscleMasterStateV2</code></dd>
+    </dl>
+    <p id="status" class="status" aria-live="polite"></p>
+  </section>
+
+  <section class="card">
+    <h2>QA向け：報酬・ミッションだけ初期化</h2>
+    <p class="muted">トレーニング履歴・累計セット・能力値は残したまま、<strong>bonus XP、クエスト達成履歴、受取台帳、演出待ちキュー</strong>を初期化します。既存のトレーニング記録からクエストが再評価されるため、報酬受取テストを繰り返す用途に適しています。</p>
+    <div class="actions"><button id="resetRewards" class="secondary" disabled>報酬・ミッションをQA初期化</button></div>
+  </section>
+
+  <section class="card">
+    <h2>QA向け：ゲーム進行を全初期化</h2>
+    <p class="muted">プロフィール名・トレーナー設定・効果音設定は残し、トレーニング履歴、累計セット、能力値、bonus XP、クエスト状態を初期状態へ戻します。</p>
+    <div class="actions"><button id="resetAll" class="primary" disabled>ゲーム進行を全初期化</button></div>
+  </section>
+
+  <section class="card">
+    <h2>バックアップ</h2>
+    <p class="muted">各リセット直前の <code>muscleMasterStateV2</code> を端末内に1件だけ自動保存します。誤操作時はここから直前状態へ戻せます。</p>
+    <div class="actions">
+      <button id="restoreBackup" disabled>直前の状態を復元</button>
+      <a class="button" href="./#quest">アプリへ戻る</a>
+    </div>
+  </section>
+</main>
+<script src="./app-core.js"></script>
+<script src="./quest-core.js"></script>
+<script>
+(() => {
+  'use strict';
+  const STORAGE_KEY='muscleMasterStateV2';
+  const BACKUP_KEY='muscleMasterDevBackupV1';
+  const devEnabled=new URLSearchParams(location.search).get('dev')==='1';
+  const Core=window.MuscleMasterCore;
+  const QuestCore=window.MuscleMasterQuestCore;
+  const status=document.querySelector('#status');
+  const resetRewards=document.querySelector('#resetRewards');
+  const resetAll=document.querySelector('#resetAll');
+  const restoreBackup=document.querySelector('#restoreBackup');
+
+  function readState(){
+    try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}')||{};}catch{return {};}
+  }
+  function saveBackup(state){localStorage.setItem(BACKUP_KEY,JSON.stringify(state));}
+  function writeState(state){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
+  function normalizedSetCount(value){const n=Number(value);return Number.isFinite(n)&&n>0?Math.floor(n):0;}
+  function render(){
+    const state=readState();
+    const sets=normalizedSetCount(state.totalSets);
+    const bonus=Core.normalizedXp(state.bonusXp);
+    const xp=Core.totalXp(sets,bonus);
+    document.querySelector('#totalSets').textContent=sets;
+    document.querySelector('#bonusXp').textContent=bonus;
+    document.querySelector('#totalXp').textContent=xp;
+    document.querySelector('#level').textContent=Core.levelForXp(xp);
+    document.querySelector('#modeWarning').classList.toggle('hidden',devEnabled);
+    resetRewards.disabled=!devEnabled;
+    resetAll.disabled=!devEnabled;
+    restoreBackup.disabled=!devEnabled||!localStorage.getItem(BACKUP_KEY);
+  }
+  function confirmReset(message){return window.confirm(`${message}\n\n実行前の状態は端末内バックアップへ保存されます。`);}
+  function resetRewardQaState(){
+    if(!devEnabled||!confirmReset('報酬・ミッション状態をQA初期化しますか？'))return;
+    const current=readState();
+    saveBackup(current);
+    const sets=normalizedSetCount(current.totalSets);
+    const next={
+      ...current,
+      bonusXp:0,
+      lastShownLevel:Core.levelForXp(Core.totalXp(sets,0)),
+      quests:QuestCore.normalizeQuestState()
+    };
+    writeState(next);
+    status.textContent='報酬・ミッション状態を初期化しました。アプリへ戻ると既存記録からミッションが再評価されます。';
+    render();
+  }
+  function resetAllProgress(){
+    if(!devEnabled||!confirmReset('ゲーム進行をすべてQA初期化しますか？'))return;
+    const current=readState();
+    saveBackup(current);
+    const next={
+      ...current,
+      days:{},
+      totalSets:0,
+      bonusXp:0,
+      stats:{strength:0,core:0,mobility:0,endurance:0},
+      lastShownLevel:1,
+      quests:QuestCore.normalizeQuestState()
+    };
+    writeState(next);
+    status.textContent='ゲーム進行を初期化しました。プロフィールと設定は保持されています。';
+    render();
+  }
+  function restore(){
+    if(!devEnabled)return;
+    const raw=localStorage.getItem(BACKUP_KEY);
+    if(!raw){status.textContent='復元できるバックアップがありません。';return;}
+    if(!window.confirm('直前のバックアップへ復元しますか？'))return;
+    try{JSON.parse(raw);localStorage.setItem(STORAGE_KEY,raw);status.textContent='直前の状態へ復元しました。';render();}
+    catch{status.textContent='バックアップが壊れているため復元できません。';}
+  }
+
+  resetRewards.addEventListener('click',resetRewardQaState);
+  resetAll.addEventListener('click',resetAllProgress);
+  restoreBackup.addEventListener('click',restore);
+  render();
+})();
+</script>
+</body>
+</html>
