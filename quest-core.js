@@ -176,6 +176,26 @@
     }
     return {state,newlyCompleted};
   }
+  function buildMissionViewModels(evaluation,current){
+    const state=normalizeQuestState(current);
+    return (Array.isArray(evaluation?.instances)?evaluation.instances:[]).map(instance=>{
+      const target=Math.max(1,Math.floor(Number(instance.target)||1));
+      const value=Math.max(0,Math.floor(Number(instance.value)||0));
+      const claimed=Boolean(state.rewardClaims[instance.instanceId]);
+      const completed=Boolean(instance.complete||state.completions[instance.instanceId]||claimed);
+      const displayValue=completed?target:Math.min(value,target);
+      return {
+        ...clone(instance),
+        value,
+        target,
+        displayValue,
+        percent:Math.min(100,Math.round(displayValue/target*100)),
+        status:claimed?'claimed':completed?'completed':'active',
+        completed,
+        claimed
+      };
+    });
+  }
   function recordRewardClaim(current,instanceId,now=new Date()){
     const state=normalizeQuestState(current),completion=state.completions[instanceId];
     if(!completion)return {state,recorded:false,reason:'not-completed',claim:null};
@@ -185,5 +205,5 @@
     return {state,recorded:true,reason:null,claim:clone(claim)};
   }
 
-  return {SCHEMA_VERSION,dateKey,periodForQuest,validateQuestPack,normalizeQuestState,evaluateQuestPack,mergeQuestEvaluation,recordRewardClaim};
+  return {SCHEMA_VERSION,dateKey,periodForQuest,validateQuestPack,normalizeQuestState,evaluateQuestPack,mergeQuestEvaluation,buildMissionViewModels,recordRewardClaim};
 });

@@ -73,6 +73,27 @@ test('reward claim ledger rejects duplicate records for the same quest instance'
   assert.deepEqual(duplicate.claim,first.claim);
 });
 
+test('mission view models distinguish active, completed and claimed states',()=>{
+  const now=new Date(2026,7,12,12);
+  const evaluation=Quest.evaluateQuestPack(pack,trainingState,{now,exerciseCatalog});
+  const merged=Quest.mergeQuestEvaluation({},evaluation,now);
+  const claimTarget=merged.newlyCompleted[0].instanceId;
+  const claimed=Quest.recordRewardClaim(merged.state,claimTarget,new Date(2026,7,12,13));
+  const missions=Quest.buildMissionViewModels(evaluation,claimed.state);
+  const byInstance=Object.fromEntries(missions.map(mission=>[mission.instanceId,mission]));
+  assert.equal(byInstance[claimTarget].status,'claimed');
+  assert.equal(byInstance[claimTarget].percent,100);
+  assert.ok(missions.some(mission=>mission.status==='completed'));
+  assert.ok(missions.some(mission=>mission.status==='active'));
+
+  const reduced=Quest.evaluateQuestPack(pack,{totalSets:0,days:{}},{now,exerciseCatalog});
+  const afterUndo=Quest.buildMissionViewModels(reduced,claimed.state);
+  const persisted=afterUndo.find(mission=>mission.instanceId===claimTarget);
+  assert.equal(persisted.status,'claimed');
+  assert.equal(persisted.displayValue,persisted.target);
+  assert.equal(persisted.percent,100);
+});
+
 test('legacy saves receive optional quest state without changing training data',()=>{
   const legacy={totalSets:3,days:{'2026-08-12':{squat:[true,true,true]}}};
   const quests=Quest.normalizeQuestState(legacy.quests);
