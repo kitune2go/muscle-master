@@ -124,6 +124,26 @@
     document.querySelector('#settingsForm')?.addEventListener('submit',()=>setTimeout(apply,0));
   }
 
+  function loadScript(src,id){
+    if(document.querySelector(`#${id}`))return Promise.resolve();
+    return new Promise((resolve,reject)=>{
+      const script=document.createElement('script');
+      script.id=id;
+      script.src=src;
+      script.defer=true;
+      script.onload=resolve;
+      script.onerror=reject;
+      document.body.appendChild(script);
+    });
+  }
+
+  function loadTrainingSessionRuntime(){
+    return loadScript('./training-session-core.js','trainingSessionCoreScript')
+      .then(()=>loadScript('./training-session-runtime.js','trainingSessionRuntimeScript'))
+      .catch(error=>console.warn('Training session runtime could not be loaded.',error));
+  }
+
   apply();
   observe();
+  loadTrainingSessionRuntime();
 })();
