@@ -48,7 +48,9 @@ test('trainer runtime loads the session gate and service worker caches it',()=>{
   const sw=read('sw.js');
   assert.match(trainerRuntime,/training-session-core\.js/);
   assert.match(trainerRuntime,/training-session-runtime\.js/);
-  assert.match(sw,/muscle-master-v17/);
+  assert.match(trainerRuntime,/training-session-presentation\.js/);
+  assert.match(sw,/muscle-master-v18/);
   assert.match(sw,/training-session-core\.js/);
   assert.match(sw,/training-session-runtime\.js/);
+  assert.match(sw,/training-session-presentation\.js/);
 });
