@@ -90,7 +90,10 @@
     if(!activeWorkout())return;
     const panel=ensurePanel(),n=nodes();
     if(!panel||!n.complete)return;
-    if(session.signature!==signature())resetSession();
+    if(session.signature!==signature()){
+      resetSession();
+      return;
+    }
 
     if(session.mode==='timer')session.ready=timerReady();
     else session.ready=SessionCore.isSessionReady({mode:'reps',started:session.started,targetReps:session.targetReps,repCount:session.repCount});
@@ -127,6 +130,15 @@
     },1000);
   }
 
+  function observeSource(node,options={childList:true,subtree:true,characterData:true}){
+    if(!node)return;
+    new MutationObserver(()=>{
+      if(!activeWorkout()){stopRepCounter();return;}
+      if(session.signature!==signature())resetSession();
+      else sync();
+    }).observe(node,options);
+  }
+
   function bind(){
     const n=nodes();
     if(!n.view||!n.toggle||!n.reset||!n.complete)return;
@@ -151,7 +163,10 @@
       if(!activeWorkout()){stopRepCounter();return;}
       if(session.signature!==signature())resetSession();
       else sync();
-    }).observe(n.view,{attributes:true,attributeFilter:['class'],subtree:true,childList:true,characterData:true});
+    }).observe(n.view,{attributes:true,attributeFilter:['class']});
+
+    [n.exercise,n.set,n.mode,n.value,n.status].forEach(node=>observeSource(node));
+    observeSource(n.ring,{attributes:true,attributeFilter:['class']});
 
     document.addEventListener('click',event=>{
       const quickSet=event.target.closest?.('.set-button:not(.done)');
