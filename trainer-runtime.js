@@ -105,7 +105,7 @@
     if(levelUp)levelUp.src=current.states.levelUp||current.assets.levelUp;
 
     const workout=document.querySelector('#workoutTrainerImage');
-    if(workout){workout.src=current.assets.portrait;workout.alt=`トレーナーの${current.displayName}`;}
+    if(workout&&!workout.dataset.sessionState){workout.src=current.assets.portrait;workout.alt=`トレーナーの${current.displayName}`;}
 
     syncProfile(current);
     syncProgress();
@@ -140,6 +140,7 @@
   function loadTrainingSessionRuntime(){
     return loadScript('./training-session-core.js','trainingSessionCoreScript')
       .then(()=>loadScript('./training-session-runtime.js','trainingSessionRuntimeScript'))
+      .then(()=>loadScript('./training-session-presentation.js','trainingSessionPresentationScript'))
       .catch(error=>console.warn('Training session runtime could not be loaded.',error));
   }
 
