@@ -35,6 +35,14 @@ test('runtime blocks incomplete quick-set completion and redirects into executio
   assert.match(runtime,/complete\.disabled=!session\.ready/);
 });
 
+test('runtime observers do not watch their own session panel subtree',()=>{
+  const runtime=read('training-session-runtime.js');
+  assert.doesNotMatch(runtime,/observe\(n\.view,\{attributes:true,attributeFilter:\['class'\],subtree:true/);
+  assert.match(runtime,/observe\(n\.view,\{attributes:true,attributeFilter:\['class'\]\}\)/);
+  assert.match(runtime,/\[n\.exercise,n\.set,n\.mode,n\.value,n\.status\]\.forEach\(node=>observeSource\(node\)\)/);
+  assert.match(runtime,/observeSource\(n\.ring,\{attributes:true,attributeFilter:\['class'\]\}\)/);
+});
+
 test('trainer runtime loads the session gate and service worker caches it',()=>{
   const trainerRuntime=read('trainer-runtime.js');
   const sw=read('sw.js');
