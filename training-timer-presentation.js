@@ -25,6 +25,8 @@
       ring:document.querySelector('#workoutTimerRing'),
       mode:document.querySelector('#workoutTimerMode'),
       value:document.querySelector('#workoutTimerValue'),
+      toggle:document.querySelector('#workoutTimerToggle'),
+      reset:document.querySelector('#workoutTimerReset'),
       image:document.querySelector('#workoutTrainerImage'),
       gate:document.querySelector('#trainingSessionGate'),
       console:document.querySelector('.workout-console'),
@@ -123,15 +125,19 @@
     window.tone(strong?720:560,strong?0.07:0.045,'triangle',strong?0.03:0.02);
   }
 
+  function clearVisuals(){
+    const n=nodes(),chip=ensureCoachChip();
+    n.ring?.classList.remove('timer-session-active','timer-session-final');
+    if(chip){chip.hidden=true;chip.dataset.phase='normal';}
+  }
+
   function resetTimerPresentation(){
     totalSeconds=0;
     lastSecond=null;
     halfwayShown=false;
     tenShown=false;
     clearTimeout(restoreTimerId);
-    const n=nodes(),chip=ensureCoachChip();
-    n.ring?.classList.remove('timer-session-active','timer-session-final');
-    if(chip){chip.hidden=true;chip.dataset.phase='normal';}
+    clearVisuals();
   }
 
   function setCoach(text,phase='normal'){
@@ -145,11 +151,7 @@
   function updateTimerPresentation(){
     const n=nodes();
     if(!activeWorkout()||!isTimerMode()||!running()||gateReady()||inRest()){
-      if(!running()||!isTimerMode()){
-        n.ring?.classList.remove('timer-session-active','timer-session-final');
-        const chip=ensureCoachChip();
-        if(chip)chip.hidden=true;
-      }
+      if(!running()||!isTimerMode()||!activeWorkout())clearVisuals();
       return;
     }
 
@@ -188,8 +190,7 @@
       setTrainer('cheer',{pop:remaining===5});
       setCoach(`リオ：ラスト${remaining}秒！`,'final');
       showBurst(String(remaining));
-      if(remaining<=3)playTick(true);
-      else playTick(false);
+      playTick(remaining<=3);
     }else{
       n.ring?.classList.remove('timer-session-final');
     }
@@ -199,20 +200,20 @@
     ensureStyle();
     ensureCoachChip();
     const n=nodes();
-    if(!n.view||!n.ring||!n.mode||!n.value)return;
+    if(!n.view||!n.ring||!n.mode||!n.value||!n.toggle)return;
+
+    // Do not observe the ring class: this runtime also decorates that class list.
+    // Watching and writing the same attribute can create a MutationObserver feedback loop.
+    n.toggle.addEventListener('click',()=>setTimeout(updateTimerPresentation,0));
+    n.reset?.addEventListener('click',()=>setTimeout(()=>{
+      resetTimerPresentation();
+      if(activeWorkout())updateTimerPresentation();
+    },0));
 
     new MutationObserver(()=>{
       if(!activeWorkout())resetTimerPresentation();
       else updateTimerPresentation();
     }).observe(n.view,{attributes:true,attributeFilter:['class']});
-
-    new MutationObserver(()=>{
-      if(!running()){
-        const chip=ensureCoachChip();
-        n.ring.classList.remove('timer-session-active','timer-session-final');
-        if(chip)chip.hidden=true;
-      }else updateTimerPresentation();
-    }).observe(n.ring,{attributes:true,attributeFilter:['class']});
 
     new MutationObserver(updateTimerPresentation).observe(n.value,{childList:true,characterData:true,subtree:true});
     new MutationObserver(()=>{
