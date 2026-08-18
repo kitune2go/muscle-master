@@ -120,7 +120,7 @@
 
   function playTick(strong=false){
     if(typeof window.tone!=='function')return;
-    window.tone(strong?720:560,strong?.07:.045,'triangle',strong?.03:.02);
+    window.tone(strong?720:560,strong?0.07:0.045,'triangle',strong?0.03:0.02);
   }
 
   function resetTimerPresentation(){
@@ -186,7 +186,7 @@
     if(remaining<=5&&remaining>0){
       n.ring?.classList.add('timer-session-final');
       setTrainer('cheer',{pop:remaining===5});
-      setCoach(`リオ：ラスト${remaining}秒！`, 'final');
+      setCoach(`リオ：ラスト${remaining}秒！`,'final');
       showBurst(String(remaining));
       if(remaining<=3)playTick(true);
       else playTick(false);
