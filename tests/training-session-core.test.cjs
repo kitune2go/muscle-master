@@ -43,14 +43,26 @@ test('runtime observers do not watch their own session panel subtree',()=>{
   assert.match(runtime,/observeSource\(n\.ring,\{attributes:true,attributeFilter:\['class'\]\}\)/);
 });
 
+test('timer presentation adds milestone and final-five cues without broad DOM observation',()=>{
+  const timerPresentation=read('training-timer-presentation.js');
+  assert.match(timerPresentation,/HALFWAY!/);
+  assert.match(timerPresentation,/あと10秒！/);
+  assert.match(timerPresentation,/remaining<=5/);
+  assert.match(timerPresentation,/timer-session-final/);
+  assert.match(timerPresentation,/ラスト\$\{remaining\}秒/);
+  assert.doesNotMatch(timerPresentation,/observe\(n\.view,[^\n]*subtree:true/);
+});
+
 test('trainer runtime loads the session gate and service worker caches it',()=>{
   const trainerRuntime=read('trainer-runtime.js');
   const sw=read('sw.js');
   assert.match(trainerRuntime,/training-session-core\.js/);
   assert.match(trainerRuntime,/training-session-runtime\.js/);
   assert.match(trainerRuntime,/training-session-presentation\.js/);
-  assert.match(sw,/muscle-master-v18/);
+  assert.match(trainerRuntime,/training-timer-presentation\.js/);
+  assert.match(sw,/muscle-master-v19/);
   assert.match(sw,/training-session-core\.js/);
   assert.match(sw,/training-session-runtime\.js/);
   assert.match(sw,/training-session-presentation\.js/);
+  assert.match(sw,/training-timer-presentation\.js/);
 });
