@@ -141,6 +141,7 @@
     return loadScript('./training-session-core.js','trainingSessionCoreScript')
       .then(()=>loadScript('./training-session-runtime.js','trainingSessionRuntimeScript'))
       .then(()=>loadScript('./training-session-presentation.js','trainingSessionPresentationScript'))
+      .then(()=>loadScript('./training-timer-presentation.js','trainingTimerPresentationScript'))
       .catch(error=>console.warn('Training session runtime could not be loaded.',error));
   }
 
