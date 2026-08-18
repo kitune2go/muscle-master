@@ -40,7 +40,7 @@ test('golden screen uses one runtime stylesheet and vector UI icons',()=>{
   assert.equal((css.match(/{/g)||[]).length,(css.match(/}/g)||[]).length,'CSS braces must be balanced');
 
   const sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');
-  assert.match(sw,/muscle-master-v19/);
+  assert.match(sw,/muscle-master-v20/);
   assert.doesNotMatch(sw,/\.\/style\.css|\.\/v3\.css|\.\/trainer-runtime\.css/);
 });
 
