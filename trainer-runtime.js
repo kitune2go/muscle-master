@@ -105,7 +105,7 @@
     if(levelUp)levelUp.src=current.states.levelUp||current.assets.levelUp;
 
     const workout=document.querySelector('#workoutTrainerImage');
-    if(workout){workout.src=current.assets.portrait;workout.alt=`トレーナーの${current.displayName}`;}
+    if(workout&&!workout.dataset.sessionState){workout.src=current.assets.portrait;workout.alt=`トレーナーの${current.displayName}`;}
 
     syncProfile(current);
     syncProgress();
@@ -124,6 +124,28 @@
     document.querySelector('#settingsForm')?.addEventListener('submit',()=>setTimeout(apply,0));
   }
 
+  function loadScript(src,id){
+    if(document.querySelector(`#${id}`))return Promise.resolve();
+    return new Promise((resolve,reject)=>{
+      const script=document.createElement('script');
+      script.id=id;
+      script.src=src;
+      script.defer=true;
+      script.onload=resolve;
+      script.onerror=reject;
+      document.body.appendChild(script);
+    });
+  }
+
+  function loadTrainingSessionRuntime(){
+    return loadScript('./training-session-core.js','trainingSessionCoreScript')
+      .then(()=>loadScript('./training-session-runtime.js','trainingSessionRuntimeScript'))
+      .then(()=>loadScript('./training-session-presentation.js','trainingSessionPresentationScript'))
+      .then(()=>loadScript('./training-timer-presentation.js','trainingTimerPresentationScript'))
+      .catch(error=>console.warn('Training session runtime could not be loaded.',error));
+  }
+
   apply();
   observe();
+  loadTrainingSessionRuntime();
 })();
